@@ -18,10 +18,12 @@ class Game:
         self.player_string = 'test'
         self.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
         self.submit = ""
+        self.number_of_queued_texts = 5
+        self.list_of_queued_texts = []
 
         # game settings
-        self.text_rect_size_WIDTH = WINDOW_WIDTH // 3 # the upcoming and player_input string text rect WIDTH size
-        self.text_rect_size_HEIGHT = 50 # the upcoming and player_input string text rect HEIGHT size
+        self.text_rect_size_WIDTH = WINDOW_WIDTH // 3 # the queued and player_input string text rect WIDTH size
+        self.text_rect_size_HEIGHT = 50 # the queued and player_input string text rect HEIGHT size
 
         # groups
         self.all_sprites = pygame.sprite.Group()
@@ -45,9 +47,15 @@ class Game:
         self.load_game()
 
     def load_game(self):
-        self.upcoming_text_rects = self.create_upcoming_text_rects(5, self.text_rect_size_WIDTH, self.text_rect_size_HEIGHT)
+        self.queued_text_rects = self.create_queued_text_rects(5, self.text_rect_size_WIDTH, self.text_rect_size_HEIGHT)
 
-    def create_upcoming_text_rects(self, num_rects, rect_width, rect_height):
+        # initial setup with loading the texts into the list of queued texts list to prepare the game
+        while len(self.list_of_queued_texts) < self.number_of_queued_texts:
+            self.list_of_queued_texts.append(self.wordlist[0])
+            self.wordlist.pop(0)
+        
+
+    def create_queued_text_rects(self, num_rects, rect_width, rect_height):
         rects = []
         spacing = 10  # space between each rectangle
 
@@ -79,17 +87,40 @@ class Game:
             rect = pygame.Surface((rect_width, rect_height))
             rect.fill((255, 0, 0))  # Fill with red color
 
-            # Get the rect's position (center horizontally within restricted width and stack vertically)
-            rect_pos = rect.get_rect(center=(x1 + restricted_width // 2, start_y + i * (rect_height + spacing)))
-            rects.append((rect, rect_pos))
+            # get the rect's position (center horizontally within restricted width and stack vertically)
+            text_x = x1 + restricted_width // 2
+            text_y = start_y + i * (rect_height + spacing)
+            rect_pos = rect.get_frect(center=(text_x, text_y))
+            rects.append((rect, rect_pos, i))
+            print(rect_pos)
 
         return rects
+    
+    def draw_queued_text_rects(self, rects):
+        for rect, rect_pos, _ in rects:
+            self.display_surface.blit(rect, rect_pos)
+
+    def draw_queued_text(self, rects):
+        for rect, rect_pos, i in rects:
+            #creating the text surf
+            queued_text_surf = self.font.render(self.list_of_queued_texts[i], True, COLORS['white'])
+
+            # get the center of the rectangle (rect_pos is the top-left corner of the rectangle)
+            rect_center = rect_pos.center
+            
+            # calculate the position for the text (centered inside the rectangle)
+            text_x = rect_center[0] - queued_text_surf.get_width() // 2
+            text_y = rect_center[1] - queued_text_surf.get_height() // 2
+            
+            # Draw the text
+            self.display_surface.blit(queued_text_surf, (text_x, text_y))
 
     def draw_game(self):
     
-        # drawing the upcoming text rects
-        for rect, rect_pos in self.upcoming_text_rects:
-            self.display_surface.blit(rect, rect_pos)
+        # drawing the queued text rects
+        self.draw_queued_text_rects(self.queued_text_rects)
+        # drawing the queued texts on top of the rects above
+        self.draw_queued_text(self.queued_text_rects)
 
         # ----------- Player input text surface -------------------
 
