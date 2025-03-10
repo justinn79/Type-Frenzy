@@ -211,7 +211,7 @@ class Game:
     def run(self):
         while self.running:
             # dt
-            dt = self.clock.tick() / 1000
+            dt = self.clock.tick(60)
     
             # event loop
             for event in pygame.event.get():
@@ -230,7 +230,7 @@ class Game:
             self.draw_game()
             self.game_logic()
             self.healthbar.update()
-            self.typingtimer.update(dt)
+            self.typingtimer.update()
             
             pygame.display.update()
 
