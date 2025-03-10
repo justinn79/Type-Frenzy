@@ -1,5 +1,7 @@
 from settings import *
 from support import *
+from healthbar import *
+from typingtimer import *
 
 class Game:
     def __init__(self):
@@ -15,11 +17,16 @@ class Game:
         self.font = pygame.font.Font(None, 30)
 
         # game variables
-        self.player_string = 'test'
+        self.player_string = ""
+        self.can_append_to_player_string = True
+        self.player_string_limit = 12
         self.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
         self.submit = ""
+        self.submitted = False # bool value to check if the player has submitted an input
         self.number_of_queued_texts = 5
         self.list_of_queued_texts = []
+        self.wordlist_index = 0 # this index is used to append the words from the wordlist to the list_of_queued_texts list
+        
 
         # game settings
         self.text_rect_size_WIDTH = WINDOW_WIDTH // 3 # the queued and player_input string text rect WIDTH size
@@ -51,8 +58,11 @@ class Game:
 
         # initial setup with loading the texts into the list of queued texts list to prepare the game
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            self.list_of_queued_texts.append(self.wordlist[0])
-            self.wordlist.pop(0)
+            self.list_of_queued_texts.append(self.wordlist[self.wordlist_index])
+            self.wordlist_index += 1
+
+        self.healthbar = HealthBar()
+        self.typingtimer = TypingTimer()
         
 
     def create_queued_text_rects(self, num_rects, rect_width, rect_height):
@@ -92,7 +102,7 @@ class Game:
             text_y = start_y + i * (rect_height + spacing)
             rect_pos = rect.get_frect(center=(text_x, text_y))
             rects.append((rect, rect_pos, i))
-            print(rect_pos)
+            # print(rect_pos)
 
         return rects
     
@@ -115,6 +125,32 @@ class Game:
             # Draw the text
             self.display_surface.blit(queued_text_surf, (text_x, text_y))
 
+    def check_user_input(self):
+        # capping the length of the player_string so that the user cannot exceed a certain amount
+        if len(self.player_string) >= self.player_string_limit:
+            self.can_append_to_player_string = False
+        else:
+            self.can_append_to_player_string = True # this flag is used in the game loop to check whether or not the "player_string" can be added onto or not
+
+        # checks if the next word is equal to the player input string
+        if self.list_of_queued_texts[-1] == self.submit and self.submitted:
+            # print('correct')
+            self.list_of_queued_texts.pop(-1) # remove that word from the list of queued text
+            self.player_string = '' # resets the player string to get ready for the next word
+            self.typingtimer.reset_typing_timer() # resets the typing timer when the player string is correct
+            self.submitted = False # after doing the CORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
+        elif self.list_of_queued_texts[-1] != self.submit and self.submitted:
+            print('WRONG')
+            self.healthbar.losing_hearts(1)
+            self.submitted = False # after doing the INCORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
+
+        
+    def update_queued_word_list(self):
+        if len(self.list_of_queued_texts) < self.number_of_queued_texts:
+            self.list_of_queued_texts.insert(0, self.wordlist[self.wordlist_index])
+            self.wordlist_index += 1
+            # print(self.list_of_queued_texts)
+
     def draw_game(self):
     
         # drawing the queued text rects
@@ -135,14 +171,19 @@ class Game:
 
         # background for the player input text
         bg_player_string_rect = pygame.FRect(
-            player_string_surf_x - self.text_rect_size_WIDTH / 2,  # Subtract half the width to center
-            player_string_surf_y - self.text_rect_size_HEIGHT / 2,  # Subtract half the height to center
+            player_string_surf_x - self.text_rect_size_WIDTH / 2,  # subtract half the width to center
+            player_string_surf_y - self.text_rect_size_HEIGHT / 2,  # subtract half the height to center
             self.text_rect_size_WIDTH,
             self.text_rect_size_HEIGHT
         )
 
-        pygame.draw.rect(self.display_surface, COLORS['red'], bg_player_string_rect, 1)
+        pygame.draw.rect(self.display_surface, COLORS['blue'], bg_player_string_rect, 1)
         self.display_surface.blit(self.player_string_surf, player_string_surf_rect)
+
+    def game_logic(self):
+        self.check_user_input()
+        self.update_queued_word_list()
+        # print(self.wordlist_index)
     
     # function to repeatedly check for user input
     def typing_input(self, event):
@@ -150,7 +191,7 @@ class Game:
         if event.type == pygame.KEYDOWN:
 
             # handles the lower case letters
-            if event.unicode.lower() in self.letters: # if the key that was just pressed is a lower case letter that exists in self.letters, then add that to the player_string string variable
+            if event.unicode.lower() in self.letters and self.can_append_to_player_string: # if the key that was just pressed is a lower case letter that exists in self.letters, then add that to the player_string string variable
                 self.player_string += event.unicode.lower()
 
             # handles the backspace
@@ -160,6 +201,11 @@ class Game:
             # handles the enter or space key
             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                 self.submit = self.player_string
+                self.submitted = True
+                self.player_string = ""
+
+            # handles the escape key
+            if event.key == pygame.K_ESCAPE:
                 self.player_string = ""
 
     def run(self):
@@ -182,6 +228,10 @@ class Game:
             self.display_surface.fill('black')
             self.all_sprites.draw(self.display_surface)
             self.draw_game()
+            self.game_logic()
+            self.healthbar.update()
+            self.typingtimer.update(dt)
+            
             pygame.display.update()
 
         pygame.quit()
