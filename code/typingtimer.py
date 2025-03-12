@@ -19,7 +19,7 @@ class TypingTimer:
         # bar values
         self.max_value = 100
         self.current_value = self.max_value
-        self.depletion_rate = 0.75
+        self.depletion_rate = 0.25
 
         # particles
         self.particle_list = []
