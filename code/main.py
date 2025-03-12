@@ -18,7 +18,7 @@ class Game:
 
         # font
         self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
-
+        
         # game variables
         self.player_string = ""
         self.can_append_to_player_string = True
@@ -160,12 +160,51 @@ class Game:
             # get the center of the rectangle (rect_pos is the top-left corner of the rectangle)
             rect_center = rect_pos.center
             
+            # CHECK THIS FROM HERE ALL THE WAY DOWN 
+
             # calculate the position for the text (centered inside the rectangle)
             text_x = rect_center[0] - queued_text_surf.get_width() // 2
             text_y = rect_center[1] - queued_text_surf.get_height() // 2
+
+            text_rect = queued_text_surf.get_rect()
+            text_rect.center = rect_center  # align the center of the text to the center of the rect
+
+            # pygame.draw.circle(self.display_surface, COLORS['red'], (text_rect.centerx, text_rect.centery), 5) # using this red circle to check location of coordinate
+
             
-            # Draw the text
-            self.display_surface.blit(queued_text_surf, (text_x, text_y))
+            # draw the text
+            # if the current queued text matches the last queued text in the list (which is the next text that the player has to input), then make the text pulsate
+            if self.list_of_queued_texts[i] == self.list_of_queued_texts[-1]:
+                self.draw_pulsating_queued_text(self.list_of_queued_texts[i], (text_rect.centerx, text_rect.centery))
+            # otherwise, just blit the text normally
+            else:
+                self.display_surface.blit(queued_text_surf, (text_x, text_y))
+
+    def draw_pulsating_queued_text(self, text, center_position):
+
+        # initialize frame_count as an attribute of the function if it doesn't exist 
+        if not hasattr(self, "frame_count"):
+            self.frame_count = 0  # initialize the counter
+            # i am using the 'hasattr' method to do a check everytime this 'draw_pulsating_queued_text' function is called to PREVENT 'frame_count' from being overwritten and set back to 0. i want to preserve the value from when it was called to the very end
+
+        # using a sine wave for the pulsating text effect
+        scale_factor = 1 + 0.1 * math.sin(self.frame_count * 2 * math.pi / 1000)  # adjust 1000 for speed
+        self.scaled_font = pygame.font.Font('fonts/Bungee-Regular.ttf', int(30 * scale_factor))
+        text_surface = self.scaled_font.render(text, True, COLORS['white'])
+
+        # text surface dimensions
+        text_width = text_surface.get_width()
+        text_height = text_surface.get_height()
+
+        # adjusting position to center the text based on its new size
+        text_position = (center_position[0] - text_width // 2, center_position[1] - text_height // 2)
+
+        # Draw the text on the screen at the new position
+        self.display_surface.blit(text_surface, text_position)
+
+        # incrementing the frame_count value to give it that pulsating effect
+        self.frame_count += 20 # edit this value to decrease or increase the speed of the pulse
+
 
     def check_user_input(self):
         # capping the length of the player_string so that the user cannot exceed a certain amount
