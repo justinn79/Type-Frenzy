@@ -87,7 +87,7 @@ class Game:
         self.healthbar = HealthBar()
         self.typingtimer = TypingTimer()
         self.screenflash = ScreenFlash(self.display_surface)
-        self.bg_particles = [BgParticles(self.display_surface) for _ in range(50)] # create 50 instances of the BgParticles() class and put each one in the list "self.bg_particles"
+        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 50 instances of the BgParticles() class and put each one in the list "self.bg_particles"
 
 
         # ------------ PLAYER INPUT BOX COORDINATES --------------------------
@@ -106,15 +106,18 @@ class Game:
         else:
             self.can_append_to_player_string = True # this flag is used in the game loop to check whether or not the "player_string" can be added onto or not
 
+        # --------------------------------------------- CORRECT INPUT --------------------------------------------------------
         # checks if the next word is equal to the player input string
         if self.list_of_queued_texts[-1] == self.submit and self.submitted:
             # print('correct')
+            self.calculate_score(self.list_of_queued_texts[-1])
             self.list_of_queued_texts.pop(-1) # remove that word from the list of queued text
             self.player_string = '' # resets the player string to get ready for the next word
             self.typingtimer.reset_typing_timer() # resets the typing timer when the player string is correct
             self.draw_combo_count(increment=True)
             self.submitted = False # after doing the CORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
 
+        # --------------------------------------------- WRONG INPUT --------------------------------------------------------
         elif self.list_of_queued_texts[-1] != self.submit and self.submitted:
             print('WRONG')
             self.shake_text(30) # shake the player text if it is wrong
@@ -123,14 +126,23 @@ class Game:
             self.draw_combo_count(reset=True)
             self.submitted = False # after doing the INCORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
 
-        
     def update_queued_word_list(self):
         if len(self.list_of_queued_texts) < self.number_of_queued_texts:
             self.list_of_queued_texts.insert(0, self.wordlist[self.wordlist_index])
             self.wordlist_index += 1
             # print(self.list_of_queued_texts)
 
+    def calculate_score(self, input_score):
+        # if the current combo is 1, just keep the combo multiplier at 1 because multiplying the score by 0 will just result in a value of 0.
+        if self.combo == 0:
+            combo_multiplier = 1
+        else:
+            combo_multiplier = self.combo # otherwise, set the combo_multiplier to equal the combo
 
+        # the combo is calculated by taking the length of the string that the player correctly typed and multiplying it by the combo multiplier
+        score_value = len(input_score)
+        self.score += score_value * combo_multiplier
+            
     # function to repeatedly check for user input
     def typing_input(self, event):
         
@@ -200,7 +212,7 @@ class Game:
                 rect = pygame.Surface((rect_width, rect_height), pygame.SRCALPHA) # pygame.SRCALPHA adds transparency in the surface
 
                 # draw rect on the surface
-                pygame.draw.rect(rect, COLORS['purple'], rect.get_rect(), border_radius=10) # rect(surface, color, rect, width=0, border_radius=0, border_top_left_radius=-1,
+                pygame.draw.rect(rect, COLORS['lightblue'], rect.get_rect(), border_radius=10) # rect(surface, color, rect, width=0, border_radius=0, border_top_left_radius=-1,
 
                 # rect border properties
                 border_color = COLORS['darkpurple']
@@ -400,7 +412,7 @@ class Game:
         combined_surface.blit(score_text_surf, (0, 0))
         combined_surface.blit(score_surf, (score_text_surf.get_width() + 5, 0)) # blitting the score_surf to the right of score_text_surf. so we are getting the width of score_text_surf with an offset of + 5 and using that as the x coordinate of our score_surf
         
-        topright_x = WINDOW_WIDTH - 100
+        topright_x = WINDOW_WIDTH - 175
         topright_y = 50
 
         combined_rect = combined_surface.get_frect(center=(topright_x, topright_y))

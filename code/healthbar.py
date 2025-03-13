@@ -49,7 +49,7 @@ class HealthBar:
     def draw(self):
         # --------------------- DRAWING THE HEARTS/LIVES -----------------------------------
         health_bar_region_rect = pygame.FRect(self.left, self.top, self.health_bar_region_WIDTH, self.heart_image_scaled_HEIGHT) # pygame.FRect(length, top, width, height)
-        pygame.draw.rect(self.display_surface, COLORS['purple'], health_bar_region_rect, 0, self.border_radius) # rect(surface, color, rect, width=0, border_radius=0)
+        pygame.draw.rect(self.display_surface, COLORS['darkgray'], health_bar_region_rect, 0, self.border_radius) # rect(surface, color, rect, width=0, border_radius=0)
 
         # drawing the empty hearts under the full hearts
         for i in range(self.number_of_hearts_total):

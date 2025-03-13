@@ -7,6 +7,9 @@ IDEA:
 
 FUTURE ADD ONS:
 - Calculating score
+- Instead of words, players can choose to compute math equations instead
 - Game modifiers (making the game harder to increase score/difficulty)
     - Hidden (makes the word invisible)
     - Double Time (timer meter has a faster depletion)
+    - Intuition (Some letters disappear and the player has to guess what it is by inputting the word)
+    - Perfect (Player cant spell a word wrong, otherwise, its game over)
