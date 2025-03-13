@@ -1,4 +1,4 @@
-Tipitype Game
+xType
 
 IDEA:
 - Typing game where the player is prompted with words to type out

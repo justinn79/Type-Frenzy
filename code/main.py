@@ -13,7 +13,7 @@ class Game:
         # pygame.init()
         pygame.font.init()
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        pygame.display.set_caption('Tipitype')
+        pygame.display.set_caption('xType')
         self.clock = pygame.time.Clock()
         self.running = True
 
@@ -31,6 +31,7 @@ class Game:
         self.list_of_queued_texts = []
         self.wordlist_index = 0 # this index is used to append the words from the wordlist to the list_of_queued_texts list
         self.combo = 0
+        self.score = 0
 
         # text shake variables
         self.shake = False
@@ -111,7 +112,7 @@ class Game:
             self.list_of_queued_texts.pop(-1) # remove that word from the list of queued text
             self.player_string = '' # resets the player string to get ready for the next word
             self.typingtimer.reset_typing_timer() # resets the typing timer when the player string is correct
-            self.combo_count(increment=True)
+            self.draw_combo_count(increment=True)
             self.submitted = False # after doing the CORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
 
         elif self.list_of_queued_texts[-1] != self.submit and self.submitted:
@@ -119,7 +120,7 @@ class Game:
             self.shake_text(30) # shake the player text if it is wrong
             self.healthbar.losing_hearts(1)
             self.screenflash.screen_flash('red')
-            self.combo_count(reset=True)
+            self.draw_combo_count(reset=True)
             self.submitted = False # after doing the INCORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
 
         
@@ -308,7 +309,7 @@ class Game:
                 self.player_string_surf_y = self.player_string_surf_y_original
                 self.shake = False # set self.shake to false so that this function wont be active again until the player inputs another wrong text (which gives this function another timer value to activate the function)
 
-    def combo_count(self, increment=None, reset=None):
+    def draw_combo_count(self, increment=None, reset=None):
             
         # --------------------------setting up the combo string before it takes on the grow effect----------------------------
 
@@ -324,6 +325,7 @@ class Game:
         # combining the combo string and the "x" string together with a new surface (they both have different sizes so we are doing this approach)
         combined_width = x_string_surf.get_width() + combo_string_surf.get_width() + 5  # add space between them
         combined_height = max(x_string_surf.get_height(), combo_string_surf.get_height()) # getting the max height between the two to ensure that the height fits both
+        # this is the combined surface for both text surfs
         combined_surface = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
 
         #blitting both the "x" and combo string onto the new surface
@@ -380,7 +382,30 @@ class Game:
         
         self.display_surface.blit(combined_surface, combined_rect)
             
-            
+    def draw_score(self):
+        # creating the surface of the score
+
+        score_text_surf = self.font.render(("Score:"), True, COLORS["white"])
+
+        score_surf = self.font.render(str(self.score), True, COLORS["white"])
+
+
+        # combining the score_text string and the score_surf string together with a new surface
+        combined_width = score_text_surf.get_width() + score_surf.get_width() + 5  # add space between them
+        combined_height = max(score_text_surf.get_height(), score_surf.get_height()) # getting the max height between the two to ensure that the height fits both
+        # this is the combined surface for both text surfs
+        combined_surface = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
+
+        #blitting both the score_text_surf and score_surf strings onto the new surface
+        combined_surface.blit(score_text_surf, (0, 0))
+        combined_surface.blit(score_surf, (score_text_surf.get_width() + 5, 0)) # blitting the score_surf to the right of score_text_surf. so we are getting the width of score_text_surf with an offset of + 5 and using that as the x coordinate of our score_surf
+        
+        topright_x = WINDOW_WIDTH - 100
+        topright_y = 50
+
+        combined_rect = combined_surface.get_frect(center=(topright_x, topright_y))
+        
+        self.display_surface.blit(combined_surface, combined_rect)
     # --------------------------------- GAME DRAWING LOOP FUNCTION -----------------------------------------------------------------------------------#
 
     def draw_game(self):
@@ -395,7 +420,8 @@ class Game:
         self.draw_player_input_text()
         self.shake_text() # if the player gets the input wrong, shake the text
 
-        self.combo_count()
+        self.draw_combo_count()
+        self.draw_score()
 
         # ---------------------- Screen flash when player inputs wrong --------------------
         self.screenflash.screen_flash()
