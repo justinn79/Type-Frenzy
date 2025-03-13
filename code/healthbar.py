@@ -34,7 +34,7 @@ class HealthBar:
         # self.heart_image_offset_spacing = 30
 
         # number of hearts / the number of lives
-        self.number_of_hearts_total = 4
+        self.number_of_hearts_total = 5
         self.number_of_hearts_variable = self.number_of_hearts_total
 
         # heart spacing offset
@@ -64,7 +64,7 @@ class HealthBar:
         # 'lives' text surf
         lives_text_surf = self.font.render('LIVES', True, COLORS["white"])
         # getting the rect of the 'lives' text surface
-        lives_text_rect = lives_text_surf.get_frect(center=(health_bar_region_rect.x + (health_bar_region_rect.width / 3), health_bar_region_rect.centery - 35)) # (health_bar_region_rect.x + (health_bar_region_rect.width / 3) places it a third of the way down the width of the bar
+        lives_text_rect = lives_text_surf.get_frect(center=(health_bar_region_rect.x + (lives_text_surf.get_width() / 2), health_bar_region_rect.centery - 35)) # (health_bar_region_rect.x + (health_bar_region_rect.width / 3) places it a third of the way down the width of the bar
         self.display_surface.blit(lives_text_surf, lives_text_rect)
 
         # drawing the full hearts

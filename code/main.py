@@ -3,6 +3,7 @@ from support import *
 from healthbar import *
 from typingtimer import *
 from screen_flash import *
+from bg_particles import *
 import random
 import math
 
@@ -38,7 +39,6 @@ class Game:
         # combo text growing variables
         self.pulse_grow = False
         self.pulse_complete = False # we only want the text to pulse once, after that, then stop the pulse
-        self.combo_check = 0
 
         self.growth_rate = 0.1
         self.max_scale = 3
@@ -86,6 +86,8 @@ class Game:
         self.healthbar = HealthBar()
         self.typingtimer = TypingTimer()
         self.screenflash = ScreenFlash(self.display_surface)
+        self.bg_particles = [BgParticles(self.display_surface) for _ in range(50)] # create 50 instances of the BgParticles() class and put each one in the list "self.bg_particles"
+
 
         # ------------ PLAYER INPUT BOX COORDINATES --------------------------
         # creating the coordinates of where the player_string will be displayed on screen (THIS IS USED IN draw_player_input_text())
@@ -307,11 +309,8 @@ class Game:
                 self.shake = False # set self.shake to false so that this function wont be active again until the player inputs another wrong text (which gives this function another timer value to activate the function)
 
     def combo_count(self, increment=None, reset=None):
-
-        # if this function is called with reset=True, then reset the combo to 0 (when the player gets the input string wrong)
-        if reset:
-            self.combo = 0
             
+        # --------------------------setting up the combo string before it takes on the grow effect----------------------------
 
         # creating the surface of the combo string
         font_scale = 1
@@ -334,7 +333,9 @@ class Game:
         bottomleft_x = WINDOW_WIDTH // 24
         bottomleft_y = WINDOW_HEIGHT - WINDOW_HEIGHT // 16
 
-        # --------------------------the code before this is what sets up the combo string before it takes on the grow effect----------------------------
+        # if this function is called with reset=True, then reset the combo to 0 (when the player gets the input string wrong)
+        if reset:
+            self.combo = 0
 
         # if this function is called with increment=True, then add onto the self.combo variable count by 1.
         if increment:
@@ -431,6 +432,10 @@ class Game:
 
             # draw
             self.display_surface.fill(COLORS['background'])
+            # drawing the particles in the background
+            for bg_particle in self.bg_particles:
+                bg_particle.update()
+                
             self.all_sprites.draw(self.display_surface)
             self.draw_game()
             self.game_logic()
