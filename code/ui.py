@@ -7,6 +7,10 @@ class MainMenu:
         self.display_surface = display_surface
         self.title_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
         self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 20)
+
+        # load the images for the main menu
+        self.main_menu_bg = pygame.image.load('images/assets/main-menu.png').convert_alpha()
+
         self.left = 0
         self.top = 0
         # self.play is a boolean value that will always stay False until the player selects 'PLAY' on the home menu screen
@@ -45,23 +49,26 @@ class MainMenu:
 
         elif self.screen_state == 'QUIT':
             pass
-
+            
         if keys[pygame.K_ESCAPE]:
             self.screen_state = 'MAIN MENU'
             self.home_menu_index = 0
             self.game_menu_index = 0
+    
+    def draw_bg(self):
+        # bg
+        self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.scaled_main_menu_bg_rect = self.scaled_main_menu_bg.get_frect(topleft=(0,0))
+        self.display_surface.blit(self.scaled_main_menu_bg, self.scaled_main_menu_bg_rect)
 
-    def menu_selection(self, index, options):
-         # bg
-        rect = pygame.FRect(self.left, self.top, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2) # pygame.FRect(length, top, width, height)
-        pygame.draw.rect(self.display_surface, COLORS['blue'], rect, width=0, border_radius=12)  # rect(surface, color, rect, width=0, border_radius=0)
-        pygame.draw.rect(self.display_surface, COLORS['blue'], rect, 4, 12) # rect(surface, color, rect, width=0, border_radius=0)
 
+    def menu_selection(self, main_menu_bg_rect, index, options):
+        main_menu_bg_rect = main_menu_bg_rect
         # menu
         for optionIndex in range(len(options)):
             # x and y are the center points for each option
-            x = rect.left + (rect.width / 2)
-            y = rect.top + (rect.height / (len(options) + 2)) * (optionIndex + 1.5)
+            x = main_menu_bg_rect.left + (main_menu_bg_rect.width / 2)
+            y = main_menu_bg_rect.top + (main_menu_bg_rect.height / (len(options) + 2)) * (optionIndex + 1.5)
 
             # if the current option is the one that the player is currently hovering over, then change the color to GRAY
             if optionIndex == index:
@@ -87,7 +94,8 @@ class MainMenu:
 
     def update(self):
         self.input()
-        self.menu_selection(self.home_menu_index, self.home_menu_options)
+        self.draw_bg()
+        self.menu_selection(self.scaled_main_menu_bg_rect, self.home_menu_index, self.home_menu_options)
         # self.input()
         # self.draw_bg(self.dt) # continuously draw the parallax background within the home menu
 
