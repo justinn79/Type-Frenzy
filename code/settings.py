@@ -16,6 +16,8 @@ COLORS = {
     'purple': 'purple',
     'lightblue': '#2e86c1',
     'darkpurple': '#301934',
+    'midpurple': "#8e44ad",
+    'lightpurple': "#bb8fce",
     'background': '#000000',
     'darkorange': '#d35400',
     'orange': '#e67e22',

@@ -13,7 +13,10 @@ class Game:
         # setup
         # pygame.init()
         pygame.font.init()
+        # windowed screen
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        # fullscreen
+        # self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.FULLSCREEN)
         pygame.display.set_caption('xType')
         self.clock = pygame.time.Clock()
         self.running = True
@@ -475,20 +478,23 @@ class Game:
             self.all_sprites.update(dt)
 
             # draw
-            
-            # ------- IN GAME --------
-            # self.display_surface.fill(COLORS['background'])
-            # # drawing the particles in the background
-            # for bg_particle in self.bg_particles:
-            #     bg_particle.update()
-                
-            # self.all_sprites.draw(self.display_surface)
-            # self.draw_game()
-            # self.game_logic()
+            match self.screen_state:
+                case 'MAIN MENU':
+                    self.main_menu.update()
+                case 'PLAY':
+                    # ------- IN GAME --------
+                    self.display_surface.fill(COLORS['background'])
+                    # drawing the particles in the background
+                    for bg_particle in self.bg_particles:
+                        bg_particle.update()
+                        
+                    self.all_sprites.draw(self.display_surface)
+                    self.draw_game()
+                    self.game_logic()
 
             # --------- MENUS -------------
             # main menu
-            self.main_menu.update()
+            # self.main_menu.update()
             
             pygame.display.update()
 
