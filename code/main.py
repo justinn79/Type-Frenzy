@@ -4,6 +4,7 @@ from healthbar import *
 from typingtimer import *
 from screen_flash import *
 from bg_particles import *
+from ui import *
 import random
 import math
 
@@ -19,6 +20,10 @@ class Game:
 
         # font
         self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
+
+        # game states
+        # the initial screen_state is the main menu
+        self.screen_state = 'MAIN MENU'
         
         # game variables
         self.player_string = ""
@@ -88,6 +93,7 @@ class Game:
         self.typingtimer = TypingTimer()
         self.screenflash = ScreenFlash(self.display_surface)
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 50 instances of the BgParticles() class and put each one in the list "self.bg_particles"
+        self.main_menu = MainMenu(self.display_surface, self.screen_state)
 
 
         # ------------ PLAYER INPUT BOX COORDINATES --------------------------
@@ -469,14 +475,20 @@ class Game:
             self.all_sprites.update(dt)
 
             # draw
-            self.display_surface.fill(COLORS['background'])
-            # drawing the particles in the background
-            for bg_particle in self.bg_particles:
-                bg_particle.update()
+            
+            # ------- IN GAME --------
+            # self.display_surface.fill(COLORS['background'])
+            # # drawing the particles in the background
+            # for bg_particle in self.bg_particles:
+            #     bg_particle.update()
                 
-            self.all_sprites.draw(self.display_surface)
-            self.draw_game()
-            self.game_logic()
+            # self.all_sprites.draw(self.display_surface)
+            # self.draw_game()
+            # self.game_logic()
+
+            # --------- MENUS -------------
+            # main menu
+            self.main_menu.update()
             
             pygame.display.update()
 
