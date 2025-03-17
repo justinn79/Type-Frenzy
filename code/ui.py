@@ -254,7 +254,11 @@ class GameOverMenu:
         self.game_over_reason = 'testing 123' # initial game_over_reason state
         self.original_game_over_reason = self.game_over_reason
 
+    def out_of_lives_game_over(self):
+        self.game_over_reason = 'You ran out of lives'
 
+    def out_of_time_game_over(self):
+        self.game_over_reason = 'You ran out of time'
     def reset_game_over_menu_screen_state(self):
         self.game_over_menu_screen_state = self.original_game_over_menu_screen_state
         self.game_over_menu_index = 0

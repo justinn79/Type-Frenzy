@@ -73,6 +73,7 @@ class Main:
                     # repeatedly getting the updated out_of_lives bool value from the game screen (if it goes from False to True when the player loses all their lives)
                     self.game_over_out_of_lives_check = self.game.out_of_lives
                     if self.game_over_out_of_lives_check:
+                        self.game_over_menu.out_of_lives_game_over() # this function sets the out of lives text before the game over text is displayed
                         self.game_over_menu.reset_game_over_menu_screen_state()
                         self.main_screen_state = 'GAMEOVER'
 
@@ -81,6 +82,7 @@ class Main:
                     # repeatedly getting the updated out_of_time bool value from the game screen (if it goes from False to True when the player does not type the current word on time)
                     self.game_over_out_of_time_check = self.game.out_of_time
                     if self.game_over_out_of_time_check:
+                        self.game_over_menu.out_of_time_game_over() # this function sets the out of time text before the game over text is displayed
                         self.game_over_menu.reset_game_over_menu_screen_state()
                         self.main_screen_state = 'GAMEOVER'
 
