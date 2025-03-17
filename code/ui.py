@@ -128,6 +128,7 @@ class MainMenu:
             case 'MAIN MENU':
                 self.main_menu_selection(self.scaled_main_menu_bg_rect, self.home_menu_index, self.home_menu_options)
             case 'PLAY':
+                pygame.time.delay(50) # temporary bug fix for a stutter look when clicking "PLAY" from the main menu to play the game
                 # THIS STATE IS HANDLED WITHIN main.py (under 'MAIN MENU' match case)
                 pass
             case 'HOW TO PLAY':
@@ -230,7 +231,6 @@ class PauseGameMenu:
         self.draw(self.pause_menu_index, self.pause_menu_options)
 
 # ------------------------------------------------- GAME OVER UI ------------------------------------------------------------------------------------
-
 class GameOverMenu:
     def __init__(self, display_surface):
         self.display_surface = display_surface
@@ -259,6 +259,7 @@ class GameOverMenu:
 
     def out_of_time_game_over(self):
         self.game_over_reason = 'You ran out of time'
+
     def reset_game_over_menu_screen_state(self):
         self.game_over_menu_screen_state = self.original_game_over_menu_screen_state
         self.game_over_menu_index = 0

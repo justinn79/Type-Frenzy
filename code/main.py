@@ -1,6 +1,8 @@
 from settings import *
 from support import *
 
+from fade_transition import *
+
 from ui import *
 from game import *
 
@@ -15,7 +17,7 @@ class Main:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        self.main_screen_state = 'PLAY' # this is the initial main_screen_state state
+        self.main_screen_state = 'MAIN MENU' # this is the initial main_screen_state state
     
         # instances for game states
         self.game = Game(self.display_surface)
@@ -23,16 +25,27 @@ class Main:
         self.pause_game_menu = PauseGameMenu(self.display_surface)
         self.game_over_menu = GameOverMenu(self.display_surface)
 
+        # instance for fade transitions
+        self.fade_transition = FadeTransition(self.display_surface)
+
+        # self.state_change_fade_out = False
+        # self.state_change_fade_in = False
+
+        # self.transition_complete = False
+
+        # self.prev_state = self.main_screen_state
+
     def reset_all_menu_states(self):
         self.main_menu.reset_main_menu_screen_state()
         self.pause_game_menu.reset_pause_menu_screen_state()
         self.game_over_menu.reset_game_over_menu_screen_state()
 
+
     # --------------------------------- MAIN GAME LOOP -----------------------------------------------------#
 
     def run(self):
         while self.running:
-
+                
             match self.main_screen_state:
                 case 'MAIN MENU':
                     # ---------------- GETTING UPDATED SCREEN STATE VALUES ------------------------------------------
