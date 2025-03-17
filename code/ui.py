@@ -2,6 +2,7 @@ from settings import *
 from support import *
 from bg_particles import *
 
+
 # ------------------------------------------------- MAIN MENU UI ------------------------------------------------------------------------------------
 class MainMenu:
     def __init__(self, display_surface):
@@ -30,6 +31,7 @@ class MainMenu:
 
     def reset_main_menu_screen_state(self):
         self.main_menu_screen_state = self.original_main_menu_screen_state
+        self.home_menu_index = 0
 
     def input(self):
         keys = pygame.key.get_just_pressed()
@@ -165,6 +167,7 @@ class PauseGameMenu:
 
     def reset_pause_menu_screen_state(self):
         self.pause_menu_screen_state = self.original_pause_menu_screen_state
+        self.pause_menu_index = 0
 
     def input(self):
         keys = pygame.key.get_just_pressed()
@@ -230,10 +233,108 @@ class PauseGameMenu:
 
 class GameOverMenu:
     def __init__(self, display_surface):
-        pass
+        self.display_surface = display_surface
+
+        self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 30)
+        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 20)
+
+        # ------------------------------ IMAGES FOR THE MAIN MENU ------------------------------------------------------------
+        self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
+        self.menu_button_img = pygame.image.load('images/assets/menu_button.png').convert_alpha()
+
+        # game over menu control
+        self.game_over_menu_options = ['TRY AGAIN', 'MAIN MENU']
+        self.game_over_menu_index = 0
+        self.game_over_menu_option_count = len(self.game_over_menu_options)
+
+        self.game_over_menu_screen_state = '' # initial game_over menu screen state
+        self.original_game_over_menu_screen_state = self.game_over_menu_screen_state # storing the initial game_over_menu_screen_state
+
+        # game_over_reason being either "out of lives" or "out of time"
+        self.game_over_reason = 'testing 123' # initial game_over_reason state
+        self.original_game_over_reason = self.game_over_reason
+
+
+    def reset_game_over_menu_screen_state(self):
+        self.game_over_menu_screen_state = self.original_game_over_menu_screen_state
+        self.game_over_menu_index = 0
+
+    def input(self):
+        keys = pygame.key.get_just_pressed()
+        # navigating the menu with keys
+        # handle input for menu navigation within the game_over menu
+        if keys[pygame.K_DOWN]:
+            self.game_over_menu_index += 1
+        elif keys[pygame.K_UP]:
+            self.game_over_menu_index -= 1
+
+        # wrap around the index
+        self.game_over_menu_index %= self.game_over_menu_option_count
+        if keys[pygame.K_SPACE]:
+            # when the player selects one of the options, change the current state of the ui to whatever the player selects.
+            self.game_over_menu_screen_state = self.game_over_menu_options[self.game_over_menu_index]
+
+    # def update_game_over_reason(self, game_over_reason):
+    #     self.game_over_reason = game_over_reason
     
-    def draw(self):
-        pass
+    def draw(self, index, options):
+        
+        # ---------------- GAME OVER TEXT -------------------
+        # game over text coordinates
+        game_over_text_x = WINDOW_WIDTH // 2
+        game_over_text_y = WINDOW_HEIGHT // 7
+
+        game_over_text = self.title_font.render('GAME OVER' , True, COLORS['white'])
+        game_over_text_rect = game_over_text.get_frect(center=(game_over_text_x, game_over_text_y))
+
+        self.display_surface.blit(game_over_text, game_over_text_rect)
+
+        # game over reason coordinates
+        game_over_reason_text_x = game_over_text_x
+        game_over_reason_text_y = game_over_text_y + 50
+
+        game_over_reason_text = self.font.render(str(self.game_over_reason), True, COLORS['white'])
+        game_over_reason_text_rect = game_over_reason_text.get_frect(center=(game_over_reason_text_x, game_over_reason_text_y))
+
+        self.display_surface.blit(game_over_reason_text, game_over_reason_text_rect)
+
+        # ----------------- MENU SELECTION BOX ---------------------------
+        # menu selection box coordinates
+        menu_selection_box_img_x = WINDOW_WIDTH // 2 # x coordinate for the center of the window
+        menu_selection_box_img_y = WINDOW_HEIGHT // 2 # y coordinate for the center of the window
+
+        # menu selection box scaling
+        self.menu_selection_box_img_scaled = pygame.transform.scale(self.menu_selection_box_img, (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.75))
+
+        # creating a rect of the newly scaled menu selection box image after it is scaled and blitting it onto the screen
+        self.menu_selection_box_img_rect = self.menu_selection_box_img_scaled.get_frect(center=(menu_selection_box_img_x, menu_selection_box_img_y))
+        self.display_surface.blit(self.menu_selection_box_img_scaled, self.menu_selection_box_img_rect)
+
+        # MENU SELECTION OPTIONS
+        for optionIndex in range(len(options)):
+            # x and y are the center points for each option
+            x = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width / 2)
+            y = self.menu_selection_box_img_rect.top + (self.menu_selection_box_img_rect.height / (len(options) + 2)) * (optionIndex + 1.5)
+
+            # if the current option is the one that the player is currently hovering over, then change the color to GRAY
+            if optionIndex == index:
+                color = COLORS['midpurple']
+            else:
+                color = COLORS['white']
+
+
+            # blitting the text on the buttom
+            text_surf = self.font.render(options[optionIndex], True, color) # render(text, antialias, color)
+            text_rect = text_surf.get_frect(center = (x,y))
+
+            # creating the button location for the text
+            menu_button_img_scaled = pygame.transform.scale(self.menu_button_img, (text_rect.width * 1.5, text_rect.height * 2))
+            button_rect = menu_button_img_scaled.get_frect(center = (x,y))
+
+            # blitting the button image first then the text surf on top
+            self.display_surface.blit(menu_button_img_scaled, button_rect)
+            self.display_surface.blit(text_surf, text_rect) # blit(source, dest)
 
     def update(self):
-        pass
+        self.input()
+        self.draw(self.game_over_menu_index, self.game_over_menu_options)

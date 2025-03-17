@@ -24,6 +24,9 @@ class TypingTimer:
         # particles
         self.particle_list = []
 
+        # out of time check (game over check)
+        self.out_of_time = False
+
     
     def draw(self):
         typing_bar_outline_rect = pygame.FRect(  # pygame.FRect(length, top, width, height)
@@ -62,7 +65,7 @@ class TypingTimer:
 
     def game_over_check(self):
         if self.current_value <= 0:
-            print('GAME OVER, TOO SLOW')
+            self.out_of_time = True
 
     def update(self):
         self.draw()

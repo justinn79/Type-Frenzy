@@ -40,6 +40,10 @@ class Game:
         self.combo = 0
         self.score = 0
 
+        # variables that are constantly checked/updated (used to check for the game over state)
+        self.out_of_lives = False
+        self.out_of_time = False
+
         # text shake variables
         self.shake = False
         self.shake_timer = 0
@@ -62,6 +66,9 @@ class Game:
 
         # ------------- GAME SETUP -------------------
         self.load_game()
+
+    def reset_game(self, display_surface):
+        self.__init__(display_surface)
 
     def reset_pause_game_state(self):
         self.pause_game = self.original_pause_game_state
@@ -131,7 +138,10 @@ class Game:
         elif self.list_of_queued_texts[-1] != self.submit and self.submitted:
             print('WRONG')
             self.shake_text(30) # shake the player text if it is wrong
-            self.healthbar.losing_hearts(1)
+
+            # health logic
+            self.healthbar.losing_hearts(1) # decrement the number of hearts
+
             self.screenflash.screen_flash('red')
             self.draw_combo_count(reset=True)
             self.submitted = False # after doing the INCORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
@@ -461,4 +471,10 @@ class Game:
         # updating the instances created
         self.healthbar.update()
         self.typingtimer.update()
+
+        # Game Over variable checks
+        # constantly fetching the out of lives bool from the healthbar class so that the "GAMEOVER" game state in main.py can update the screen state accordingly
+        self.out_of_lives = self.healthbar.out_of_lives
+        # constantly fetching the out of time bool from the typingtimer class so that the "GAMEOVER" game state in main.py can update the screen state accordingly
+        self.out_of_time = self.typingtimer.out_of_time
     

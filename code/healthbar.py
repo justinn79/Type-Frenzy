@@ -9,6 +9,9 @@ class HealthBar:
 
         self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
 
+        # out of lives bool
+        self.out_of_lives = False
+
         # full heart image
         self.scale = 2.5
         self.heart_image = pygame.image.load('images/healthbar/fullheart.png').convert_alpha()
@@ -81,7 +84,7 @@ class HealthBar:
 
     def check_out_of_hearts(self):
         if self.number_of_hearts_variable == 0:
-            print('GAME OVER, NO MORE LIVES')
+            self.out_of_lives = True
 
     def update(self):
         self.draw()
