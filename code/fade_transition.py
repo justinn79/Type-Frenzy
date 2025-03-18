@@ -21,7 +21,7 @@ class FadeTransition:
                 fade_surface.set_alpha(alpha) # the alpha value is an integer from 0 to 255, 0 is fully transparent and 255 is fully opaque
                 self.display_surface.blit(fade_surface, (0, 0))
                 pygame.display.update()
-                pygame.time.delay(15)  # change the value to adjust the speed of the fade
+                pygame.time.delay(10)  # change the value to adjust the speed of the fade
             fade = False
 
     def fade_in(self, display_surface, fade=False):
@@ -41,5 +41,5 @@ class FadeTransition:
                 fade_surface.set_alpha(alpha) # the alpha value is an integer from 0 to 255, 0 is fully transparent and 255 is fully opaque
                 self.display_surface.blit(fade_surface, (0, 0))
                 pygame.display.update()
-                pygame.time.delay(15)  # change the value to adjust the speed of the fade
+                pygame.time.delay(10)  # change the value to adjust the speed of the fade
             fade = False
