@@ -5,8 +5,13 @@ from typingtimer import *
 from screen_flash import *
 from bg_particles import *
 from ui import *
+
 import random
 import math
+
+from wonderwords import RandomWord
+# random word instance
+word_generator = RandomWord()
 
 class Game:
     def __init__(self, display_surface):
@@ -36,9 +41,11 @@ class Game:
         self.submitted = False # bool value to check if the player has submitted an input
         self.number_of_queued_texts = 5
         self.list_of_queued_texts = []
-        self.wordlist_index = 0 # this index is used to append the words from the wordlist to the list_of_queued_texts list
+        self.wordlist_index = 0 # this index is used to append the words from the wordlist to the list_of_queued_texts list (IF DOING THE LOCAL WORD TEXT FILE METHOD)
         self.combo = 0
         self.score = 0
+        self.min_word_length = 3
+        self.max_word_length = 8
 
         # variables that are constantly checked/updated (used to check for the game over state)
         self.out_of_lives = False
@@ -74,27 +81,34 @@ class Game:
         self.pause_game = self.original_pause_game_state
 
     def load_game(self):
-
-        # ---------------- WORD LIST --------------------------------------
-        # creating the wordlist list
-        self.wordlist = read_words_from_file('word_storage/words.txt')
-        
-        # ------------- WORD LIST SORTING ---------------------
-        # sorting the wordlist list
-        self.len_indexes = [] # a list to show how many words has a specific length or less (variable below)
-        self.length = 1 # value to check how many words in the word list has this specific number of letters
-        self.wordlist.sort(key=len) # sorting the word list by the length of each word
-        # a for loop to go through the entire word list and sort out their word lengths within the "self.len_indexes" list
-        for i in range(len(self.wordlist)):
-            if len(self.wordlist[i]) > self.length:
-                self.length += 1
-                self.len_indexes.append(i)
-        self.len_indexes.append(len(self.wordlist)) # appends the maximum length word list at the end of the iteration above
-
+        # -------------- WORD LIST FROM A RANDOM WORD LIBRARY --------------------------------
         # initial setup with loading the texts into the list of queued texts list to prepare the game
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            self.list_of_queued_texts.append(self.wordlist[self.wordlist_index])
-            self.wordlist_index += 1
+            word = word_generator.word()
+            if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha(): # word.isalpha() checks if the word is alphabetical (no non letter characters)
+                self.list_of_queued_texts.append(word)
+
+
+        # # ---------------- WORD LIST FROM TEXT_FILE --------------------------------------
+        # # creating the wordlist list
+        # self.wordlist = read_words_from_file('word_storage/words.txt')
+        
+        # # ------------- WORD LIST SORTING ---------------------
+        # # sorting the wordlist list
+        # self.len_indexes = [] # a list to show how many words has a specific length or less (variable below)
+        # self.length = 1 # value to check how many words in the word list has this specific number of letters
+        # self.wordlist.sort(key=len) # sorting the word list by the length of each word
+        # # a for loop to go through the entire word list and sort out their word lengths within the "self.len_indexes" list
+        # for i in range(len(self.wordlist)):
+        #     if len(self.wordlist[i]) > self.length:
+        #         self.length += 1
+        #         self.len_indexes.append(i)
+        # self.len_indexes.append(len(self.wordlist)) # appends the maximum length word list at the end of the iteration above
+
+        # # initial setup with loading the texts into the list of queued texts list to prepare the game
+        # while len(self.list_of_queued_texts) < self.number_of_queued_texts:
+        #     self.list_of_queued_texts.append(self.wordlist[self.wordlist_index])
+        #     self.wordlist_index += 1
         # -------------------------------------------------------------------------------------------
 
         # list of the queued text rectangles to be drawn
@@ -115,6 +129,18 @@ class Game:
         self.player_string_surf_y = self.player_string_surf_y_original
 
     # --------------------------------- GAME LOGIC FUNCTIONS------------------------------------------------------------------------------------------#
+
+    def update_queued_word_list_WORD_LIBRARY(self, min_word_length, max_word_length):
+        while len(self.list_of_queued_texts) < self.number_of_queued_texts:
+            word = word_generator.word()
+            if min_word_length <= len(word) <= max_word_length and word.isalpha(): # word.isalpha() checks if the word is alphabetical (no non letter characters):
+                self.list_of_queued_texts.insert(0, word)
+
+    def update_queued_word_list_TEXTFILE(self):
+        if len(self.list_of_queued_texts) < self.number_of_queued_texts:
+            self.list_of_queued_texts.insert(0, self.wordlist[self.wordlist_index])
+            self.wordlist_index += 1
+            # print(self.list_of_queued_texts)
 
     def check_user_input(self):
         # capping the length of the player_string so that the user cannot exceed a certain amount
@@ -145,12 +171,6 @@ class Game:
             self.screenflash.screen_flash('red')
             self.draw_combo_count(reset=True)
             self.submitted = False # after doing the INCORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
-
-    def update_queued_word_list(self):
-        if len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            self.list_of_queued_texts.insert(0, self.wordlist[self.wordlist_index])
-            self.wordlist_index += 1
-            # print(self.list_of_queued_texts)
 
     def calculate_score(self, input_score):
         # if the current combo is 1, just keep the combo multiplier at 1 because multiplying the score by 0 will just result in a value of 0.
@@ -465,7 +485,8 @@ class Game:
 
     def game_logic(self):
         self.check_user_input()
-        self.update_queued_word_list()
+        # self.update_queued_word_list_TEXTFILE()
+        self.update_queued_word_list_WORD_LIBRARY(self.min_word_length, self.max_word_length)
         # print(self.wordlist_index)
         
         # updating the instances created
