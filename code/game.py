@@ -10,8 +10,6 @@ import random
 import math
 
 from wonderwords import RandomWord
-# random word instance
-word_generator = RandomWord()
 
 class Game:
     def __init__(self, display_surface):
@@ -71,6 +69,9 @@ class Game:
         # groups
         self.all_sprites = pygame.sprite.Group()
 
+        # random word instance
+        self.word_generator = RandomWord()
+
         # ------------- GAME SETUP -------------------
         self.load_game()
 
@@ -84,8 +85,8 @@ class Game:
         # -------------- WORD LIST FROM A RANDOM WORD LIBRARY --------------------------------
         # initial setup with loading the texts into the list of queued texts list to prepare the game
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            word = word_generator.word()
-            if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha(): # word.isalpha() checks if the word is alphabetical (no non letter characters)
+            word = self.word_generator.word()
+            if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters)
                 self.list_of_queued_texts.append(word)
 
 
@@ -118,7 +119,7 @@ class Game:
         self.healthbar = HealthBar()
         self.typingtimer = TypingTimer()
         self.screenflash = ScreenFlash(self.display_surface)
-        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 50 instances of the BgParticles() class and put each one in the list "self.bg_particles"
+        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create x instances of the BgParticles() class and put each one in the list "self.bg_particles"
 
 
         # ------------ PLAYER INPUT BOX COORDINATES --------------------------
@@ -132,8 +133,8 @@ class Game:
 
     def update_queued_word_list_WORD_LIBRARY(self, min_word_length, max_word_length):
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            word = word_generator.word()
-            if min_word_length <= len(word) <= max_word_length and word.isalpha(): # word.isalpha() checks if the word is alphabetical (no non letter characters):
+            word = self.word_generator.word()
+            if min_word_length <= len(word) <= max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters):
                 self.list_of_queued_texts.insert(0, word)
 
     def update_queued_word_list_TEXTFILE(self):

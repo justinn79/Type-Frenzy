@@ -17,13 +17,14 @@ class Main:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        self.main_screen_state = 'MAIN MENU' # this is the initial main_screen_state state
+        self.main_screen_state = 'PRE GAME SELECT' # this is the initial main_screen_state state
     
         # instances for game states
         self.game = Game(self.display_surface)
         self.main_menu = MainMenu(self.display_surface)
         self.pause_game_menu = PauseGameMenu(self.display_surface)
         self.game_over_menu = GameOverMenu(self.display_surface)
+        self.pre_game_select_menu = PreGameSelectMenu(self.display_surface)
 
         # ------------ FADE TRANSITION-------------------
         # instance for fade transitions
@@ -48,6 +49,7 @@ class Main:
         self.pause_game_menu.reset_pause_menu_screen_state()
         self.game_over_menu.reset_game_over_menu_screen_state()
         self.game.reset_pause_game_state()
+        self.pre_game_select_menu.reset_pre_game_select_menu_screen_state()
 
     def change_states(self, state_name, continue_from_pause=False):
         self.reset_all_menu_states() # resets all the menu states to its original/initial state
@@ -61,8 +63,6 @@ class Main:
             self.fade_out_transition()
             return True # having this function return True so that i can call this function within an if statement to call "continue" (ignore the remaining code in the main game loop after this function is called) - THIS IS MAINLY FOR THE FADE IN TRANSITION
 
-
-
     # --------------------------------- MAIN GAME LOOP -----------------------------------------------------#
 
     def run(self):
@@ -75,10 +75,10 @@ class Main:
                     # repeatedly getting the updated screen state from the main menu if it changes through the player input
                     self.main_menu_screen_state = self.main_menu.main_menu_screen_state
 
-                    # ----- PLAY CHECK ------------
-                    # if the main_menu_screen_state in ui.py becomes 'PLAY', change the main_screen_state variable within THIS file to change the state to PLAY (otherwise, handle the other states within the mainmenu in the main menu class)
-                    if self.main_menu_screen_state == 'PLAY':
-                        if self.change_states('PLAY'): # before changing the main_screen_state, call this function to set the main_menu_screen_state from main menu back to its original default value (MAIN MENU) - a reset
+                    # ----- PRE GAME SELECT CHECK ------------
+                    # if the main_menu_screen_state in ui.py becomes 'PRE GAME SELECT', change the main_screen_state variable within THIS file to change the state to PRE GAME SELECT (otherwise, handle the other states within the mainmenu in the main menu class)
+                    if self.main_menu_screen_state == 'PRE GAME SELECT':
+                        if self.change_states('PRE GAME SELECT'): # before changing the main_screen_state, call this function to set the main_menu_screen_state from main menu back to its original default value (MAIN MENU) - a reset
                             continue
 
                     # ------ QUIT CHECK -----------
@@ -144,9 +144,6 @@ class Main:
 
                         self.game.typing_input(event)
 
-                    # update
-                    # self.game.all_sprites.update(
-
                     # draw
                     # ------- IN GAME --------
                     self.game.display_surface.fill(COLORS['background'])
@@ -161,6 +158,44 @@ class Main:
                     # fade in transition (we want this to be at the very end of the match case because since we are passing "self.display_surface", we want the transition to be called after the current screen for the state has been visually updated)
                     self.fade_in_transition(self.display_surface)
             
+                case 'PRE GAME SELECT':
+                    # ---------------- GETTING UPDATED SCREEN STATE VALUES ------------------------------------------
+
+                    # repeatedly getting the updated screen state from the main menu if it changes through the player input
+                    self.pre_game_select_menu_screen_state = self.pre_game_select_menu.pre_game_select_menu_screen_state
+
+                    # -------------- MAIN MENU CHECK ------------------
+                    # if the pre_game_select_menu_screen_state in ui.py becomes 'MAIN MENU', change the main_screen_state variable within THIS file to change the state to MAIN MENU (otherwise, handle the other states within the ui.py file)
+                    if self.pre_game_select_menu_screen_state == 'MAIN MENU':
+                        self.game.reset_game(self.display_surface) # going to the main menu will restart the game
+                        if self.change_states('MAIN MENU'): # before changing the main_screen_state, call this function to reset the game_over menu's screen state back to its original default value ("") - a reset
+                            continue
+
+                    # ----- PLAY CHECK ------------
+                    # if the main_menu_screen_state in ui.py becomes 'PLAY', change the main_screen_state variable within THIS file to change the state to PLAY (otherwise, handle the other states within the mainmenu in the main menu class)
+                    if self.pre_game_select_menu_screen_state == 'PLAY':
+                        if self.change_states('PLAY'): # before changing the main_screen_state, call this function to set the main_menu_screen_state from main menu back to its original default value (MAIN MENU) - a reset
+                            continue
+
+                    # ------ BACK CHECK -----------
+                    # if self.main_menu_screen_state == 'QUIT':
+                    #     self.running = False
+
+                    # dt
+                    dt = self.clock.tick(60)
+            
+                    # event loop
+                    for event in pygame.event.get():
+                        
+                        if event.type == pygame.QUIT:
+                            self.running = False
+
+                    # pre game select visual
+                    self.pre_game_select_menu.update()
+
+                    # fade in transition (we want this to be at the very end of the match case because since we are passing "self.display_surface", we want the transition to be called after the current screen for the state has been visually updated)
+                    self.fade_in_transition(self.display_surface)
+
                 case 'PAUSEGAME':
                     # ---------------- GETTING UPDATED SCREEN STATE VALUES ------------------------------------------
 
