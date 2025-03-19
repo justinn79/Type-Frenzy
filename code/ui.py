@@ -365,6 +365,14 @@ class PreGameSelectMenu:
         # ------------------------------ IMAGES FOR THE PRE GAME MENU ------------------------------------------------------------
         self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
         self.menu_button_img = pygame.image.load('images/assets/menu_button.png').convert_alpha()
+        self.menu_game_modifier_button_img = pygame.image.load('images/assets/menu_game_modifier_button.png').convert_alpha()
+
+        self.unselected_box_img = pygame.image.load('images/assets/unselected_box.png').convert_alpha()
+        self.selected_box_img = pygame.image.load('images/assets/selected_box.png').convert_alpha()
+
+        # selection box scaling
+        self.unselected_box_surf = pygame.transform.scale(self.unselected_box_img, (self.unselected_box_img.width * 2, self.unselected_box_img.height * 2))
+        self.selected_box_surf = pygame.transform.scale(self.selected_box_img, (self.selected_box_img.width * 2, self.selected_box_img.height * 2))
 
         # pre_game_select menu control
         self.pre_game_select_menu_options = ['Double Time', 'Hidden', 'Perfect', 'PLAY']
@@ -374,7 +382,8 @@ class PreGameSelectMenu:
         self.pre_game_select_menu_screen_state = '' # initial pre_game_select menu screen state
         self.original_pre_game_select_menu_screen_state = self.pre_game_select_menu_screen_state # storing the initial pre_game_select_menu_screen_state
 
-        self.modifier_select = ''
+        self.modifier_selected_bool = False
+        self.modifier_selection = [] # a list containing all the modifiers the user has selected
 
         # get the current menu option that the user is currently hovering on
         self.user_current_option_index = 0
@@ -406,12 +415,16 @@ class PreGameSelectMenu:
         # wrap around the index
         self.pre_game_select_menu_index %= self.pre_game_select_menu_option_count
         if keys[pygame.K_SPACE]:
+            user_menu_selection = self.pre_game_select_menu_options[self.pre_game_select_menu_index]
             # only update self.pre_game_select_menu_screen_state when the player selects 'PLAY'
-            if self.pre_game_select_menu_options[self.pre_game_select_menu_index] == 'PLAY':
-                self.pre_game_select_menu_screen_state = self.pre_game_select_menu_options[self.pre_game_select_menu_index]
+            if user_menu_selection == 'PLAY':
+                self.pre_game_select_menu_screen_state = user_menu_selection
             else:
                 # otherwise, just store the option that the player selected within this pre_game_select_menu to the "self.modifier_select" variable.
-                self.modifier_select = self.pre_game_select_menu_options[self.pre_game_select_menu_index]
+                if (user_menu_selection) not in self.modifier_selection:
+                    self.modifier_selection.append(user_menu_selection)
+                else:
+                    self.modifier_selection.remove(user_menu_selection)
             
         if keys[pygame.K_ESCAPE]:
             # RETURN TO THE MAIN MENU
@@ -501,7 +514,7 @@ class PreGameSelectMenu:
         x_left_center_of_menu_selection_box = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width // 4)
 
         for optionIndex in range(len(options)):
-            # x and y are the center points for each option
+            # x and y are the coordinates for each option
             x = x_left_center_of_menu_selection_box
             y = self.menu_selection_box_img_rect.top + (self.menu_selection_box_img_rect.height / (len(options) + 2)) * (optionIndex + 1.5)
 
@@ -520,21 +533,30 @@ class PreGameSelectMenu:
                 text_rect = text_surf.get_frect(center = (x_center, y_under_rect))
             else:
                 text_surf = self.font.render(options[optionIndex], True, color) # render(text, antialias, color)
-                text_rect = text_surf.get_frect(center = (x,y))
-
+                text_rect = text_surf.get_frect(midleft = (x,y))
+                
+            # checking what modifiers were selected by the user. we want to display the selected_box_surf if it is selected and the unselected_box_surf when it is not selected.
+            if str(options[optionIndex]) in self.modifier_selection:
+                selection_box_surf = self.selected_box_surf
+                selection_box_rect = self.unselected_box_surf.get_frect(topright = (text_rect.left - 50, text_rect.y))
+            else:
+                selection_box_surf = self.unselected_box_surf
+                selection_box_rect = self.unselected_box_surf.get_frect(topright = (text_rect.left - 50, text_rect.y))
 
             # if the menu option is 'PLAY', then put that BUTTON image at the center of the screen under the menu box rect
             if options[optionIndex] == 'PLAY':
                 menu_button_img_scaled = pygame.transform.scale(self.menu_button_img, (text_rect.width * 2, text_rect.height * 3))
                 button_rect = menu_button_img_scaled.get_frect(center = (x_center, y_under_rect))
             else:
-                menu_button_img_scaled = pygame.transform.scale(self.menu_button_img, (text_rect.width * 1.5, text_rect.height * 2))
-                button_rect = menu_button_img_scaled.get_frect(center = (x,y))
+                menu_button_img_scaled = pygame.transform.scale(self.menu_game_modifier_button_img, (text_rect.width * 1.5, text_rect.height * 2))
+                button_rect = menu_button_img_scaled.get_frect(center = (text_rect.centerx, text_rect.centery))
 
             # blitting the button image first then the text surf on top
             self.display_surface.blit(menu_button_img_scaled, button_rect)
             self.display_surface.blit(text_surf, text_rect) # blit(source, dest)
-
+            
+            # blitting the checkboxes beside each option
+            self.display_surface.blit(selection_box_surf, selection_box_rect)
     def draw_option_description(self):
         # -------------- THE OPTION HEADER ----------------------
         # the coordinates are blitted at their center points 
