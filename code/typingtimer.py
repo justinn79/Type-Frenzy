@@ -4,7 +4,7 @@ from support import *
 from particles import *
 
 class TypingTimer:
-    def __init__(self):
+    def __init__(self, depletion_rate):
 
         self.display_surface = pygame.display.get_surface()
 
@@ -19,7 +19,11 @@ class TypingTimer:
         # bar values
         self.max_value = 100
         self.current_value = self.max_value
-        self.depletion_rate = 0.25
+        self.depletion_rate = depletion_rate
+        
+        #increasing factor for the bar values
+        self.bar_multiplier = 1
+        self.bar_multiplier_increment = 0.0001 # increase this value for a faster bar multiplier rate increase
 
         # particles
         self.particle_list = []
@@ -67,10 +71,15 @@ class TypingTimer:
         if self.current_value <= 0:
             self.out_of_time = True
 
+    def update_timer_value(self):
+        self.current_value -= self.depletion_rate * self.bar_multiplier
+        self.bar_multiplier += self.bar_multiplier_increment
+        print(self.bar_multiplier)
+
     def update(self):
         self.draw()
         # adjust the depletion rate to account for delta time
-        self.current_value -= self.depletion_rate
+        self.update_timer_value()
         self.constraint()
         self.game_over_check()
         self.particles.update()

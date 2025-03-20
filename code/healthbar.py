@@ -3,7 +3,7 @@ from timer import Timer
 from support import *
 
 class HealthBar:
-    def __init__(self):
+    def __init__(self, number_of_lives):
 
         self.display_surface = pygame.display.get_surface()
 
@@ -37,7 +37,7 @@ class HealthBar:
         # self.heart_image_offset_spacing = 30
 
         # number of hearts / the number of lives
-        self.number_of_hearts_total = 5
+        self.number_of_hearts_total = number_of_lives
         self.number_of_hearts_variable = self.number_of_hearts_total
 
         # heart spacing offset

@@ -45,6 +45,17 @@ class Game:
         self.min_word_length = 3
         self.max_word_length = 8
 
+        # changing game variables (game modifier variables)
+        # --- Perfect Modifier ------
+        self.default_number_of_lives = 5 # 5 is the default number of lives
+        self.number_of_lives = self.default_number_of_lives # this is a copy variable of the number of lives unless it changes through user selection
+        # --- Double Time Modifier ------
+        self.default_depletion_rate = 0.25 # 0.25 is the default depletion rate
+        self.depletion_rate = self.default_depletion_rate # this is a copy variable of the depletion rate unless it changes through user selection
+        # # --- Hidden Modifier ------
+        # self.default_number_of_lives = 5 # 5 is the default number of lives
+        # self.number_of_lives = self.default_number_of_lives # this is a copy variable of the number of lives unless it changes through user selection
+
         # variables that are constantly checked/updated (used to check for the game over state)
         self.out_of_lives = False
         self.out_of_time = False
@@ -66,22 +77,15 @@ class Game:
         self.text_rect_size_WIDTH = WINDOW_WIDTH // 3 # the queued and player_input string text rect WIDTH size
         self.text_rect_size_HEIGHT = 50 # the queued and player_input string text rect HEIGHT size
 
+        # game modifiers
+        self.game_modifiers = [] # this variable is constantly being updated in the "PRE GAME SELECT" state in main.py (it is constantly fetching the game_modifiers list from ui.py within the PreGameSelect class)
+
         # groups
         self.all_sprites = pygame.sprite.Group()
 
         # random word instance
         self.word_generator = RandomWord()
 
-        # ------------- GAME SETUP -------------------
-        self.load_game()
-
-    def reset_game(self, display_surface):
-        self.__init__(display_surface)
-
-    def reset_pause_game_state(self):
-        self.pause_game = self.original_pause_game_state
-
-    def load_game(self):
         # -------------- WORD LIST FROM A RANDOM WORD LIBRARY --------------------------------
         # initial setup with loading the texts into the list of queued texts list to prepare the game
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
@@ -89,36 +93,42 @@ class Game:
             if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters)
                 self.list_of_queued_texts.append(word)
 
+        # ------------- GAME SETUP -------------------
 
-        # # ---------------- WORD LIST FROM TEXT_FILE --------------------------------------
-        # # creating the wordlist list
-        # self.wordlist = read_words_from_file('word_storage/words.txt')
+        self.load_game()
         
-        # # ------------- WORD LIST SORTING ---------------------
-        # # sorting the wordlist list
-        # self.len_indexes = [] # a list to show how many words has a specific length or less (variable below)
-        # self.length = 1 # value to check how many words in the word list has this specific number of letters
-        # self.wordlist.sort(key=len) # sorting the word list by the length of each word
-        # # a for loop to go through the entire word list and sort out their word lengths within the "self.len_indexes" list
-        # for i in range(len(self.wordlist)):
-        #     if len(self.wordlist[i]) > self.length:
-        #         self.length += 1
-        #         self.len_indexes.append(i)
-        # self.len_indexes.append(len(self.wordlist)) # appends the maximum length word list at the end of the iteration above
-
-        # # initial setup with loading the texts into the list of queued texts list to prepare the game
-        # while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-        #     self.list_of_queued_texts.append(self.wordlist[self.wordlist_index])
-        #     self.wordlist_index += 1
-        # -------------------------------------------------------------------------------------------
+    def load_game(self):
 
         # list of the queued text rectangles to be drawn
         self.queued_text_rects = self.create_queued_text_rects(5, self.text_rect_size_WIDTH, self.text_rect_size_HEIGHT)
 
+        for game_modifier in self.game_modifiers:
+
+            if game_modifier == 'Double Time':
+                self.depletion_rate = self.default_depletion_rate * 2
+
+            if game_modifier == 'Perfect':
+                self.number_of_lives = 1
+
+            # if game_modifier == 'Hidden':
+            #     self.number_of_lives = 1
+            # else:
+            #     self.number_of_lives = self.default_number_of_lives
+
+            # print(self.game_modifiers)
+            
+        if 'Double Time' not in self.game_modifiers:
+            self.depletion_rate = self.default_depletion_rate
+        if 'Perfect' not in self.game_modifiers:
+            self.number_of_lives = self.default_number_of_lives
+        # if 'Hidden' not in self.game_modifiers:
+        #     self.depletion_rate = self.default_depletion_rate
+
         # instances
-        self.healthbar = HealthBar()
-        self.typingtimer = TypingTimer()
+        self.healthbar = HealthBar(self.number_of_lives)
+        self.typingtimer = TypingTimer(self.depletion_rate)
         self.screenflash = ScreenFlash(self.display_surface)
+
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create x instances of the BgParticles() class and put each one in the list "self.bg_particles"
 
 
@@ -128,6 +138,12 @@ class Game:
         self.player_string_surf_x = self.player_string_surf_x_original
         self.player_string_surf_y_original = WINDOW_HEIGHT - (WINDOW_HEIGHT // 6)
         self.player_string_surf_y = self.player_string_surf_y_original
+
+    def reset_game(self, display_surface):
+        self.__init__(display_surface)
+
+    def reset_pause_game_state(self):
+        self.pause_game = self.original_pause_game_state
 
     # --------------------------------- GAME LOGIC FUNCTIONS------------------------------------------------------------------------------------------#
 
@@ -488,6 +504,7 @@ class Game:
         self.check_user_input()
         # self.update_queued_word_list_TEXTFILE()
         self.update_queued_word_list_WORD_LIBRARY(self.min_word_length, self.max_word_length)
+        # self.activate_game_modifiers()
         # print(self.wordlist_index)
         
         # updating the instances created
@@ -499,4 +516,6 @@ class Game:
         self.out_of_lives = self.healthbar.out_of_lives
         # constantly fetching the out of time bool from the typingtimer class so that the "GAMEOVER" game state in main.py can update the screen state accordingly
         self.out_of_time = self.typingtimer.out_of_time
+
+        # print(self.game_modifiers)
     

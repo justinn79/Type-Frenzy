@@ -17,7 +17,7 @@ class Main:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        self.main_screen_state = 'PRE GAME SELECT' # this is the initial main_screen_state state
+        self.main_screen_state = 'PLAY' # this is the initial main_screen_state state
     
         # instances for game states
         self.game = Game(self.display_surface)
@@ -33,6 +33,8 @@ class Main:
         self.fade_initiated = False # check if the fade transition has been initiated to prepare for the fade in transition (this bool is used in the main game loop so that the fade does not continuosly occur - we want it to only happen once)
 
         #--------------------------------------------------
+
+        self.game_variables_updated = False
 
     def fade_out_transition(self):
         self.fade_transition.fade_out(fade=True)
@@ -53,6 +55,8 @@ class Main:
 
     def change_states(self, state_name, continue_from_pause=False):
         self.reset_all_menu_states() # resets all the menu states to its original/initial state
+
+        self.game_variables_updated = False # sets the game_variables_updated flag back to False so that it can be updated once again if needed
         
         self.main_screen_state = str(state_name) # changing the main screen state of the game
 
@@ -63,6 +67,18 @@ class Main:
             self.fade_out_transition()
             return True # having this function return True so that i can call this function within an if statement to call "continue" (ignore the remaining code in the main game loop after this function is called) - THIS IS MAINLY FOR THE FADE IN TRANSITION
 
+    def update_game_variables(self, reset_game_modifiers=False):
+        if reset_game_modifiers:
+            self.pre_game_select_menu.modifier_selection = [] # reset the game_modifiers list within the class game back to BLANK
+            self.game.game_modifiers = [] # reset the game_modifiers list within the class game back to BLANK
+
+        # this continuosly updates the "game_modifiers" variable within the game class. we want this continuosly calling here so that whatever the user selects, it will be sent to the game class to enable the corresponding game modifier.
+        self.game.game_modifiers = self.pre_game_select_menu.modifier_selection
+        # print(self.game.game_modifiers)
+        if not self.game_variables_updated:
+            self.game.load_game()
+            self.game_variables_updated = True
+
     # --------------------------------- MAIN GAME LOOP -----------------------------------------------------#
 
     def run(self):
@@ -70,6 +86,8 @@ class Main:
                 
             match self.main_screen_state:
                 case 'MAIN MENU':
+                    # when we go back into the main menu screen, reset all the game modifiers so that it is blank when the user goes back into the pre game select menu
+                    self.update_game_variables(reset_game_modifiers=True)
                     # ---------------- GETTING UPDATED SCREEN STATE VALUES ------------------------------------------
 
                     # repeatedly getting the updated screen state from the main menu if it changes through the player input
@@ -101,6 +119,10 @@ class Main:
                     self.fade_in_transition(self.display_surface)
 
                 case 'PLAY':
+                    # this function updates the game variables to ensure that the game modifiers that are selected or unselected are on/off accordingly when the game begins
+                    self.update_game_variables()
+                    # self.game_modifiers = self.pre_game_select_menu.get_modifier_selection()
+                    # print(self.game_modifiers)
                     # ---------------- GETTING UPDATED SCREEN STATE VALUES ------------------------
 
                     # ------- GAME OVER CHECK ----------
@@ -159,6 +181,9 @@ class Main:
                     self.fade_in_transition(self.display_surface)
             
                 case 'PRE GAME SELECT':
+                    # this function updates the game variables to ensure that the game modifiers that are selected or unselected are on/off accordingly when the game begins
+                    # self.update_game_variables()
+
                     # ---------------- GETTING UPDATED SCREEN STATE VALUES ------------------------------------------
 
                     # repeatedly getting the updated screen state from the main menu if it changes through the player input

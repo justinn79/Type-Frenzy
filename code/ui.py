@@ -363,6 +363,7 @@ class PreGameSelectMenu:
         self.game_modifier_text_font = pygame.font.Font('fonts/SpaceGrotesk-Medium.ttf', 15)
 
         # ------------------------------ IMAGES FOR THE PRE GAME MENU ------------------------------------------------------------
+        self.main_menu_bg = pygame.image.load('images/assets/main_menu_background.png').convert_alpha()
         self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
         self.menu_button_img = pygame.image.load('images/assets/menu_button.png').convert_alpha()
         self.menu_game_modifier_button_img = pygame.image.load('images/assets/menu_game_modifier_button.png').convert_alpha()
@@ -392,6 +393,16 @@ class PreGameSelectMenu:
         self.double_time_text = 'The typing countdown meter is twice as fast. Type the current word quickly before the timer runs out'
         self.hidden_text = 'The current queued text will not be displayed. Remember that word before it comes into queue.'
         self.perfect_text = ' You only have one life. Once you submit an incorrect word, it is game over!'
+
+    def get_modifier_selection(self):
+        return self.modifier_selection
+
+    def draw_bg(self):
+        # SCALING
+        self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
+        self.scaled_main_menu_bg_rect = self.scaled_main_menu_bg.get_frect(topleft=(0,0))
+        self.display_surface.blit(self.scaled_main_menu_bg, self.scaled_main_menu_bg_rect)
 
     def draw_particle_bg(self):
         # drawing the particles in the background
@@ -535,13 +546,13 @@ class PreGameSelectMenu:
                 text_surf = self.font.render(options[optionIndex], True, color) # render(text, antialias, color)
                 text_rect = text_surf.get_frect(midleft = (x,y))
                 
-            # checking what modifiers were selected by the user. we want to display the selected_box_surf if it is selected and the unselected_box_surf when it is not selected.
-            if str(options[optionIndex]) in self.modifier_selection:
-                selection_box_surf = self.selected_box_surf
-                selection_box_rect = self.unselected_box_surf.get_frect(topright = (text_rect.left - 50, text_rect.y))
-            else:
-                selection_box_surf = self.unselected_box_surf
-                selection_box_rect = self.unselected_box_surf.get_frect(topright = (text_rect.left - 50, text_rect.y))
+                # checking what modifiers were selected by the user. we want to display the selected_box_surf if it is selected and the unselected_box_surf when it is not selected.
+                if str(options[optionIndex]) in self.modifier_selection:
+                    selection_box_surf = self.selected_box_surf
+                    selection_box_rect = self.unselected_box_surf.get_frect(topright = (text_rect.left - 50, text_rect.y))
+                else:
+                    selection_box_surf = self.unselected_box_surf
+                    selection_box_rect = self.unselected_box_surf.get_frect(topright = (text_rect.left - 50, text_rect.y))
 
             # if the menu option is 'PLAY', then put that BUTTON image at the center of the screen under the menu box rect
             if options[optionIndex] == 'PLAY':
@@ -557,6 +568,7 @@ class PreGameSelectMenu:
             
             # blitting the checkboxes beside each option
             self.display_surface.blit(selection_box_surf, selection_box_rect)
+            
     def draw_option_description(self):
         # -------------- THE OPTION HEADER ----------------------
         # the coordinates are blitted at their center points 
@@ -604,7 +616,7 @@ class PreGameSelectMenu:
         
 
     def update(self):
-        self.display_surface.fill(COLORS['black']) # adding this so that the particle bg that is being drawn (in the code below) looks natural since nothing is being displayed behind it
+        self.draw_bg()
         self.draw_particle_bg()
         self.input()
         self.draw(self.pre_game_select_menu_index, self.pre_game_select_menu_options)
