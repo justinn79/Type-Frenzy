@@ -74,7 +74,7 @@ class TypingTimer:
     def update_timer_value(self):
         self.current_value -= self.depletion_rate * self.bar_multiplier
         self.bar_multiplier += self.bar_multiplier_increment
-        print(self.bar_multiplier)
+        # print(self.bar_multiplier)
 
     def update(self):
         self.draw()

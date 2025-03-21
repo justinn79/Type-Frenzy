@@ -95,6 +95,19 @@ class Game:
                 self.list_of_queued_texts.append(word)
 
         # ------------- GAME SETUP -------------------
+        # game modifier icon images
+        self.icon_scale = 2
+        # double time mod icon
+        self.double_time_icon = pygame.image.load('images/game_mod_icons/double_time_icon.png').convert_alpha()
+        self.double_time_icon = pygame.transform.scale(self.double_time_icon, (self.double_time_icon.get_width() * self.icon_scale, self.double_time_icon.get_height() * self.icon_scale))
+
+        # hidden mod icon
+        self.hidden_icon = pygame.image.load('images/game_mod_icons/hidden_icon.png').convert_alpha()
+        self.hidden_icon = pygame.transform.scale(self.hidden_icon, (self.hidden_icon.get_width() * self.icon_scale, self.hidden_icon.get_height() * self.icon_scale))
+
+        # perfect mod icon
+        self.perfect_icon = pygame.image.load('images/game_mod_icons/perfect_icon.png').convert_alpha()
+        self.perfect_icon = pygame.transform.scale(self.perfect_icon, (self.perfect_icon.get_width() * self.icon_scale, self.perfect_icon.get_height() * self.icon_scale))
 
         self.load_game()
         
@@ -182,7 +195,7 @@ class Game:
 
         # --------------------------------------------- WRONG INPUT --------------------------------------------------------
         elif self.list_of_queued_texts[-1] != self.submit and self.submitted:
-            print('WRONG')
+            # print('WRONG')
             self.shake_text(30) # shake the player text if it is wrong
 
             # health logic
@@ -485,6 +498,24 @@ class Game:
         combined_rect = combined_surface.get_frect(center=(topright_x, topright_y))
         
         self.display_surface.blit(combined_surface, combined_rect)
+   
+    def draw_game_modifiers(self, game_modifier):
+        icon_spacing = 70 # pixel spacing between each icon
+        for i in range(len(game_modifier)):
+
+            # checking what the current game modifier within the iteration it is. depending on what it is on the current iteration, change the icon_surf icon to its corresponding game modifier
+            if game_modifier[i] == 'Double Time':
+                icon_surf = self.double_time_icon
+            if game_modifier[i] == 'Hidden':
+                icon_surf = self.hidden_icon
+            if game_modifier[i] == 'Perfect':
+                icon_surf = self.perfect_icon
+
+            x_loc = self.healthbar.health_bar_region_rect.x + (i * icon_spacing) # getting the horizontal distance of the current icon
+            y_loc = self.healthbar.health_bar_region_rect.y + 50 # adding x amount of pixels under the healthbar region (displaying it under the health bar region)
+            
+            self.display_surface.blit(icon_surf, (x_loc, y_loc))
+
     # --------------------------------- GAME DRAWING LOOP FUNCTION -----------------------------------------------------------------------------------#
 
     def draw_game(self):
@@ -501,6 +532,7 @@ class Game:
 
         self.draw_combo_count()
         self.draw_score()
+        self.draw_game_modifiers(self.game_modifiers)
 
         # ---------------------- Screen flash when player inputs wrong --------------------
         self.screenflash.screen_flash()

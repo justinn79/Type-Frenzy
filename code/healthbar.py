@@ -49,10 +49,12 @@ class HealthBar:
         self.health_bar_region_WIDTH = (self.heart_image_scaled_WIDTH * self.number_of_hearts_total) + self.added_heart_spacing + self.heart_offset_spacing
         self.health_bar_region_HEIGHT = WINDOW_HEIGHT // 18
 
+        # health bar rect
+        self.health_bar_region_rect = pygame.FRect(self.left, self.top, self.health_bar_region_WIDTH, self.heart_image_scaled_HEIGHT) # pygame.FRect(length, top, width, height)
+
     def draw(self):
         # --------------------- DRAWING THE HEARTS/LIVES -----------------------------------
-        health_bar_region_rect = pygame.FRect(self.left, self.top, self.health_bar_region_WIDTH, self.heart_image_scaled_HEIGHT) # pygame.FRect(length, top, width, height)
-        pygame.draw.rect(self.display_surface, COLORS['darkgray'], health_bar_region_rect, 0, self.border_radius) # rect(surface, color, rect, width=0, border_radius=0)
+        pygame.draw.rect(self.display_surface, COLORS['darkgray'], self.health_bar_region_rect, 0, self.border_radius) # rect(surface, color, rect, width=0, border_radius=0)
 
         # drawing the empty hearts under the full hearts
         for i in range(self.number_of_hearts_total):
@@ -67,7 +69,7 @@ class HealthBar:
         # 'lives' text surf
         lives_text_surf = self.font.render('LIVES', True, COLORS["white"])
         # getting the rect of the 'lives' text surface
-        lives_text_rect = lives_text_surf.get_frect(center=(health_bar_region_rect.x + (lives_text_surf.get_width() / 2), health_bar_region_rect.centery - 35)) # (health_bar_region_rect.x + (health_bar_region_rect.width / 3) places it a third of the way down the width of the bar
+        lives_text_rect = lives_text_surf.get_frect(center=(self.health_bar_region_rect.x + (lives_text_surf.get_width() / 2), self.health_bar_region_rect.centery - 35)) # (self.health_bar_region_rect.x + (self.health_bar_region_rect.width / 3) places it a third of the way down the width of the bar
         self.display_surface.blit(lives_text_surf, lives_text_rect)
 
         # drawing the full hearts
