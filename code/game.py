@@ -3,6 +3,7 @@ from support import *
 from healthbar import *
 from typingtimer import *
 from screen_flash import *
+from text_fade import *
 from bg_particles import *
 from ui import *
 
@@ -128,6 +129,7 @@ class Game:
         self.healthbar = HealthBar(self.number_of_lives)
         self.typingtimer = TypingTimer(self.depletion_rate)
         self.screenflash = ScreenFlash(self.display_surface)
+        self.textfade = TextFade()
 
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create x instances of the BgParticles() class and put each one in the list "self.bg_particles"
 
@@ -175,6 +177,7 @@ class Game:
             self.player_string = '' # resets the player string to get ready for the next word
             self.typingtimer.reset_typing_timer() # resets the typing timer when the player string is correct
             self.draw_combo_count(increment=True)
+            self.textfade.alpha = 255 # resets the alpha value for the text fade back to its original value (255) - this is only matters when the user selects the 'Hidden' game modifier
             self.submitted = False # after doing the CORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
 
         # --------------------------------------------- WRONG INPUT --------------------------------------------------------
@@ -314,7 +317,7 @@ class Game:
 
             # pygame.draw.circle(self.display_surface, COLORS['red'], (text_rect.centerx, text_rect.centery), 5) # using this red circle to check location of coordinate
             
-            # draw the text
+            # draw the text CODE HERE
             # if the current queued text matches the last queued text in the list (which is the next text that the player has to input), then make the text pulsate
             if self.list_of_queued_texts[i] == self.list_of_queued_texts[-1]:
                 self.draw_pulsating_text(self.list_of_queued_texts[i], (text_rect.centerx, text_rect.centery))
@@ -340,6 +343,10 @@ class Game:
 
         # adjusting position to center the text based on its new size
         text_position = (center_position[0] - text_width // 2, center_position[1] - text_height // 2)
+
+        # if the game modifier "Hidden" is active, we want the queued text to fade
+        if 'Hidden' in self.game_modifiers:
+            text_surface = self.textfade.fading_text(text_surface)
 
         # Draw the text on the screen at the new position
         self.display_surface.blit(text_surface, text_position)
