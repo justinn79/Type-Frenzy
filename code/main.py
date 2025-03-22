@@ -17,7 +17,7 @@ class Main:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        self.main_screen_state = 'PLAY' # this is the initial main_screen_state state
+        self.main_screen_state = 'MAIN MENU' # this is the initial main_screen_state state
     
         # instances for game states
         self.game = Game(self.display_surface)

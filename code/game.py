@@ -231,8 +231,9 @@ class Game:
 
             # handles the enter or space key
             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                self.submit = self.player_string
-                self.submitted = True
+                if self.player_string != '': # when the player string is empty, dont submit the player string
+                    self.submit = self.player_string
+                    self.submitted = True
 
             # handles the tab key to erase the players current typed string
             if event.key == pygame.K_TAB:

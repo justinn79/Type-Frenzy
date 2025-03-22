@@ -1,6 +1,7 @@
 from settings import *
 from support import *
 from bg_particles import *
+from timer import Timer
 
 
 # ------------------------------------------------- MAIN MENU UI ------------------------------------------------------------------------------------
@@ -288,6 +289,9 @@ class GameOverMenu:
         # game modifier list to display
         self.game_modifiers = []
 
+        # ignore player input timer
+        self.ignore_input_timer = Timer(3000, autostart=True) # we want to ignore player input for x amount of time to prevent the player from inputting something too fast when reaching the game over menu
+
     def draw_bg(self):
         # SCALING
         self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -421,8 +425,10 @@ class GameOverMenu:
     def update(self):
         self.draw_bg()
         self.draw_particle_bg()
-        self.input()
+        if not self.ignore_input_timer.active: # once the ignore_input_timer is not active anymore, allow player input
+            self.input()
         self.draw(self.game_over_menu_index, self.game_over_menu_options)
+        self.ignore_input_timer.update()
 
 # ------------------------------------------------- PRE GAME SELECT UI ------------------------------------------------------------------------------------
 class PreGameSelectMenu:
