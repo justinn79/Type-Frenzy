@@ -239,10 +239,15 @@ class GameOverMenu:
     def __init__(self, display_surface):
         self.display_surface = display_surface
 
+        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 100 instances of the BgParticles() class and put each one in the list "self.bg_particles"
+
         self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 30)
+        self.font2 = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
+        self.score_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
         self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 20)
 
         # ------------------------------ IMAGES FOR THE MAIN MENU ------------------------------------------------------------
+        self.main_menu_bg = pygame.image.load('images/assets/main_menu_background.png').convert_alpha()
         self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
         self.menu_button_img = pygame.image.load('images/assets/menu_button.png').convert_alpha()
 
@@ -258,6 +263,38 @@ class GameOverMenu:
         self.game_over_reason = 'testing 123' # initial game_over_reason state
         self.original_game_over_reason = self.game_over_reason
 
+        # game modifier icon images
+        self.icon_scale = 1
+        # double time mod icon
+        self.double_time_icon = pygame.image.load('images/game_mod_icons/double_time_icon.png').convert_alpha()
+        self.double_time_icon = pygame.transform.scale(self.double_time_icon, (self.double_time_icon.get_width() * self.icon_scale, self.double_time_icon.get_height() * self.icon_scale))
+
+        # hidden mod icon
+        self.hidden_icon = pygame.image.load('images/game_mod_icons/hidden_icon.png').convert_alpha()
+        self.hidden_icon = pygame.transform.scale(self.hidden_icon, (self.hidden_icon.get_width() * self.icon_scale, self.hidden_icon.get_height() * self.icon_scale))
+
+        # perfect mod icon
+        self.perfect_icon = pygame.image.load('images/game_mod_icons/perfect_icon.png').convert_alpha()
+        self.perfect_icon = pygame.transform.scale(self.perfect_icon, (self.perfect_icon.get_width() * self.icon_scale, self.perfect_icon.get_height() * self.icon_scale))
+
+        # score value variable to display
+        self.score_value = 0
+
+        # game modifier list to display
+        self.game_modifiers = []
+
+    def draw_bg(self):
+        # SCALING
+        self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
+        self.scaled_main_menu_bg_rect = self.scaled_main_menu_bg.get_frect(topleft=(0,0))
+        self.display_surface.blit(self.scaled_main_menu_bg, self.scaled_main_menu_bg_rect)
+
+    def draw_particle_bg(self):
+        # drawing the particles in the background
+        for bg_particle in self.bg_particles:
+            bg_particle.update()
+
     def out_of_lives_game_over(self):
         self.game_over_reason = 'You ran out of lives'
 
@@ -267,6 +304,12 @@ class GameOverMenu:
     def reset_game_over_menu_screen_state(self):
         self.game_over_menu_screen_state = self.original_game_over_menu_screen_state
         self.game_over_menu_index = 0
+
+    def fetch_score_value(self, score_value):
+        self.score_value = score_value
+
+    def fetch_game_modifiers(self, game_modifier_list):
+        self.game_modifiers = game_modifier_list
 
     def input(self):
         keys = pygame.key.get_just_pressed()
@@ -298,14 +341,31 @@ class GameOverMenu:
 
         self.display_surface.blit(game_over_text, game_over_text_rect)
 
-        # game over reason coordinates
-        game_over_reason_text_x = game_over_text_x
-        game_over_reason_text_y = game_over_text_y + 50
+        # ---------------- SCORE DISPLAY TEXT -------------------
+        score_text = self.score_font.render('Score: ' + str(self.score_value), True, COLORS['white'])
+        score_text_rect = score_text.get_frect(center=(game_over_text_x, game_over_text_y + 40))
 
-        game_over_reason_text = self.font.render(str(self.game_over_reason), True, COLORS['white'])
-        game_over_reason_text_rect = game_over_reason_text.get_frect(center=(game_over_reason_text_x, game_over_reason_text_y))
+        self.display_surface.blit(score_text, score_text_rect)
 
-        self.display_surface.blit(game_over_reason_text, game_over_reason_text_rect)
+        # ---------------- GAME MODIFIERS DISPLAY TEXT -------------------
+        game_modifier_text = self.font.render('Game Modifiers used: ', True, COLORS['white'])
+        game_modifier_text_rect = game_modifier_text.get_frect(center=(score_text_rect.centerx, score_text_rect.y + 55))
+
+        self.display_surface.blit(game_modifier_text, game_modifier_text_rect)
+
+        icon_spacing = 35
+        for i in range(len(self.game_modifiers)):
+            if self.game_modifiers[i] == 'Double Time':
+                icon_surf = self.double_time_icon
+            if self.game_modifiers[i] == 'Hidden':
+                icon_surf = self.hidden_icon
+            if self.game_modifiers[i] == 'Perfect':
+                icon_surf = self.perfect_icon
+
+            x_loc = game_modifier_text_rect.right + (i * icon_spacing) # getting the horizontal distance of the current icon (same x location as the title of the game modifier that is being displayed)
+            y_loc = game_modifier_text_rect.y # adding x amount of pixels under the text title of the modifier (displaying it under the modifier title)
+            
+            self.display_surface.blit(icon_surf, (x_loc, y_loc))
 
         # ----------------- MENU SELECTION BOX ---------------------------
         # menu selection box coordinates
@@ -316,8 +376,18 @@ class GameOverMenu:
         self.menu_selection_box_img_scaled = pygame.transform.scale(self.menu_selection_box_img, (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.75))
 
         # creating a rect of the newly scaled menu selection box image after it is scaled and blitting it onto the screen
-        self.menu_selection_box_img_rect = self.menu_selection_box_img_scaled.get_frect(center=(menu_selection_box_img_x, menu_selection_box_img_y))
+        self.menu_selection_box_img_rect = self.menu_selection_box_img_scaled.get_frect(center=(menu_selection_box_img_x, menu_selection_box_img_y + 80))
         self.display_surface.blit(self.menu_selection_box_img_scaled, self.menu_selection_box_img_rect)
+
+        # ---------------- GAME OVER REASON TEXT -------------------
+        # game over reason coordinates
+        # game_over_reason_text_x = game_over_text_x
+        # game_over_reason_text_y = game_over_text_y + 50
+
+        game_over_reason_text = self.font2.render(str(self.game_over_reason), True, COLORS['black'])
+        game_over_reason_text_rect = game_over_reason_text.get_frect(center=(self.menu_selection_box_img_rect.centerx, self.menu_selection_box_img_rect.y + 75))
+
+        self.display_surface.blit(game_over_reason_text, game_over_reason_text_rect)
 
         # MENU SELECTION OPTIONS
         for optionIndex in range(len(options)):
@@ -330,7 +400,6 @@ class GameOverMenu:
                 color = COLORS['midpurple']
             else:
                 color = COLORS['white']
-
 
             # blitting the text on the buttom
             text_surf = self.font.render(options[optionIndex], True, color) # render(text, antialias, color)
@@ -345,6 +414,8 @@ class GameOverMenu:
             self.display_surface.blit(text_surf, text_rect) # blit(source, dest)
 
     def update(self):
+        self.draw_bg()
+        self.draw_particle_bg()
         self.input()
         self.draw(self.game_over_menu_index, self.game_over_menu_options)
 
@@ -389,6 +460,20 @@ class PreGameSelectMenu:
         # get the current menu option that the user is currently hovering on
         self.user_current_option_index = 0
 
+        # game modifier icon images
+        self.icon_scale = 1.5
+        # double time mod icon
+        self.double_time_icon = pygame.image.load('images/game_mod_icons/double_time_icon.png').convert_alpha()
+        self.double_time_icon = pygame.transform.scale(self.double_time_icon, (self.double_time_icon.get_width() * self.icon_scale, self.double_time_icon.get_height() * self.icon_scale))
+
+        # hidden mod icon
+        self.hidden_icon = pygame.image.load('images/game_mod_icons/hidden_icon.png').convert_alpha()
+        self.hidden_icon = pygame.transform.scale(self.hidden_icon, (self.hidden_icon.get_width() * self.icon_scale, self.hidden_icon.get_height() * self.icon_scale))
+
+        # perfect mod icon
+        self.perfect_icon = pygame.image.load('images/game_mod_icons/perfect_icon.png').convert_alpha()
+        self.perfect_icon = pygame.transform.scale(self.perfect_icon, (self.perfect_icon.get_width() * self.icon_scale, self.perfect_icon.get_height() * self.icon_scale))
+
         # game modifier text description
         self.double_time_text = 'The typing countdown meter is twice as fast. Type the current word quickly before the timer runs out'
         self.hidden_text = 'The current queued text will not be displayed. Remember that word before it comes into queue.'
@@ -397,6 +482,20 @@ class PreGameSelectMenu:
     def get_modifier_selection(self):
         return self.modifier_selection
 
+    def draw_game_modifier_icon(self, user_modifier_selection, modifier_text_rect):
+            # checking what modifier the user is currently hovering over. depending on what it is, change the icon_surf icon to its corresponding game modifier (this function is used within "draw_option_description()")
+            if user_modifier_selection == 'Double Time':
+                icon_surf = self.double_time_icon
+            if user_modifier_selection == 'Hidden':
+                icon_surf = self.hidden_icon
+            if user_modifier_selection == 'Perfect':
+                icon_surf = self.perfect_icon
+
+            x_loc = modifier_text_rect.centerx - 30 # getting the horizontal distance of the current icon (same x location as the title of the game modifier that is being displayed)
+            y_loc = modifier_text_rect.y + 40 # adding x amount of pixels under the text title of the modifier (displaying it under the modifier title)
+            
+            self.display_surface.blit(icon_surf, (x_loc, y_loc))
+        
     def draw_bg(self):
         # SCALING
         self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -487,7 +586,7 @@ class PreGameSelectMenu:
         if current_user_option == 'Double Time':
             text_lines = self.wrap_text(self.double_time_text, text_font, self.faded_background_rect.width)
             # Render each line of wrapped text inside the rectangle
-            y_offset = self.faded_background_rect.top + self.faded_background_rect.height // 4
+            y_offset = self.faded_background_rect.top + self.faded_background_rect.height - 230
             for line in text_lines:
                 line_surface = text_font.render(line, True, COLORS['black'])
                 self.display_surface.blit(line_surface, (self.faded_background_rect.left + 2, y_offset))
@@ -496,7 +595,7 @@ class PreGameSelectMenu:
         if current_user_option == 'Hidden':
             text_lines = self.wrap_text(self.hidden_text, text_font, self.faded_background_rect.width)
             # Render each line of wrapped text inside the rectangle
-            y_offset = self.faded_background_rect.top + self.faded_background_rect.height // 4
+            y_offset = self.faded_background_rect.top + self.faded_background_rect.height - 230
             for line in text_lines:
                 line_surface = text_font.render(line, True, COLORS['black'])
                 self.display_surface.blit(line_surface, (self.faded_background_rect.left + 2, y_offset))
@@ -505,7 +604,7 @@ class PreGameSelectMenu:
         if current_user_option == 'Perfect':
             text_lines = self.wrap_text(self.perfect_text, text_font, self.faded_background_rect.width)
             # Render each line of wrapped text inside the rectangle
-            y_offset = self.faded_background_rect.top + self.faded_background_rect.height // 4
+            y_offset = self.faded_background_rect.top + self.faded_background_rect.height - 230
             for line in text_lines:
                 line_surface = text_font.render(line, True, COLORS['black'])
                 self.display_surface.blit(line_surface, (self.faded_background_rect.left + 2, y_offset))
@@ -579,6 +678,10 @@ class PreGameSelectMenu:
         
         option_header_text_surf = self.game_modifier_title_font.render(current_user_option, True, COLORS['black'])
         option_header_text_rect = option_header_text_surf.get_frect(center = (option_header_x, option_header_y))
+        
+        # draws the current user options' icon if the current user is not hovering over "PLAY"
+        if current_user_option != 'PLAY':
+            self.draw_game_modifier_icon(current_user_option, option_header_text_rect)
 
         self.display_surface.blit(option_header_text_surf, option_header_text_rect) # blit(source, dest)
 

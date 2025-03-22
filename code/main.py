@@ -17,7 +17,7 @@ class Main:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        self.main_screen_state = 'MAIN MENU' # this is the initial main_screen_state state
+        self.main_screen_state = 'PRE GAME SELECT' # this is the initial main_screen_state state
     
         # instances for game states
         self.game = Game(self.display_surface)
@@ -133,6 +133,8 @@ class Main:
                     # repeatedly getting the updated out_of_lives bool value from the game screen (if it goes from False to True when the player loses all their lives)
                     self.game_over_out_of_lives_check = self.game.out_of_lives
                     if self.game_over_out_of_lives_check:
+                        self.game_over_menu.fetch_score_value(self.game.score) # fetches the current score of the player
+                        self.game_over_menu.fetch_game_modifiers(self.game.game_modifiers) # fetches the current game modifiers that was being used by the player during this run
                         self.game_over_menu.out_of_lives_game_over() # this function sets the out of lives text before the game over text is displayed
                         if self.change_states('GAMEOVER'):
                             continue
@@ -142,6 +144,8 @@ class Main:
                     # repeatedly getting the updated out_of_time bool value from the game screen (if it goes from False to True when the player does not type the current word on time)
                     self.game_over_out_of_time_check = self.game.out_of_time
                     if self.game_over_out_of_time_check:
+                        self.game_over_menu.fetch_score_value(self.game.score) # fetches the current score of the player
+                        self.game_over_menu.fetch_game_modifiers(self.game.game_modifiers) # fetches the current game modifiers that was being used by the player during this run
                         self.game_over_menu.out_of_time_game_over() # this function sets the out of time text before the game over text is displayed
                         if self.change_states('GAMEOVER'):
                             continue
