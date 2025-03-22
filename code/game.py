@@ -424,7 +424,7 @@ class Game:
         combined_surface.blit(x_string_surf, (0, combined_height - x_string_surf.get_height() - 5)) # y value = combined_height - x_string_surf.get_height() - because we are blitting it from the top left so we want the full height of the combined height minus the height of the string were blitting (in this case, the "x" string) to put it at the bottom left of the surface
         combined_surface.blit(combo_string_surf, (x_string_surf.get_width() + 5, 0)) # we want to blit this combo_string_surf at an x value equal to "x_string_surf.get_width" so it is blitted at the right of it. otherwise, it will overlap each other. we are also adding + 5 as an offset
         
-        bottomleft_x = WINDOW_WIDTH // 24
+        bottomleft_x = WINDOW_WIDTH // 22
         bottomleft_y = WINDOW_HEIGHT - WINDOW_HEIGHT // 16
 
         # if this function is called with reset=True, then reset the combo to 0 (when the player gets the input string wrong)

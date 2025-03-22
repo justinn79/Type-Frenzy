@@ -17,7 +17,7 @@ class Main:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        self.main_screen_state = 'PRE GAME SELECT' # this is the initial main_screen_state state
+        self.main_screen_state = 'PLAY' # this is the initial main_screen_state state
     
         # instances for game states
         self.game = Game(self.display_surface)
@@ -56,7 +56,10 @@ class Main:
     def change_states(self, state_name, continue_from_pause=False):
         self.reset_all_menu_states() # resets all the menu states to its original/initial state
 
-        self.game_variables_updated = False # sets the game_variables_updated flag back to False so that it can be updated once again if needed
+        if self.main_screen_state != 'PAUSEGAME':
+            self.game_variables_updated = False # sets the game_variables_updated flag back to False so that it can be updated once again if needed
+        else:
+            self.game_variables_updated = True # if the main screen state is 'PAUSEGAME', keep this variable 'True' because we do not want to reupdate/reset the game mid run (since this is only a pause state) - this fixes the bug where the player has a 'lives' and 'typingtimer' reset when pausing the game and selects continue.
         
         self.main_screen_state = str(state_name) # changing the main screen state of the game
 
@@ -65,7 +68,7 @@ class Main:
             
         if self.main_screen_state != 'PAUSEGAME':
             self.fade_out_transition()
-            return True # having this function return True so that i can call this function within an if statement to call "continue" (ignore the remaining code in the main game loop after this function is called) - THIS IS MAINLY FOR THE FADE IN TRANSITION
+            return True # having this function return True so that i can call this function within an if statement to call "continue" (ignore the remaining code in the main game loop after this function is called) - THIS IS MAINLY FOR THE FADE IN TRANSITION (if the player pauses the game, we dont want to do the fade transition and we still want the current code within the game loop to continue running. this is because the player is still playing the current run even though it is exiting the "PLAY" state)
 
     def update_game_variables(self, reset_game_modifiers=False):
         if reset_game_modifiers:

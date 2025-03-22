@@ -205,6 +205,11 @@ class PauseGameMenu:
         self.menu_selection_box_img_rect = self.menu_selection_box_img_scaled.get_frect(center=(menu_selection_box_img_x, menu_selection_box_img_y))
         self.display_surface.blit(self.menu_selection_box_img_scaled, self.menu_selection_box_img_rect)
 
+        pause_game_text = self.title_font.render('PAUSED', True, COLORS['white'])
+        pause_game_text_rect = pause_game_text.get_frect(center=(self.menu_selection_box_img_rect.centerx, WINDOW_HEIGHT // 7))
+
+        self.display_surface.blit(pause_game_text, pause_game_text_rect)
+
         # MENU SELECTION OPTIONS
         for optionIndex in range(len(options)):
             # x and y are the center points for each option
