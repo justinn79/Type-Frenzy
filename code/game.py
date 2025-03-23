@@ -82,6 +82,8 @@ class Game:
         # game modifiers
         self.game_modifiers = [] # this variable is constantly being updated in the "PRE GAME SELECT" state in main.py (it is constantly fetching the game_modifiers list from ui.py within the PreGameSelect class)
 
+        # game modifier multiplier
+        self.game_modifier_multiplier = 1
         # groups
         self.all_sprites = pygame.sprite.Group()
 
@@ -121,14 +123,15 @@ class Game:
 
             if game_modifier == 'Double Time':
                 self.depletion_rate = self.default_depletion_rate * 2
+                self.game_modifier_multiplier += 0.25
+
+            if game_modifier == 'Hidden':
+                self.game_modifier_multiplier += 0.15
 
             if game_modifier == 'Perfect':
                 self.number_of_lives = 1
+                self.game_modifier_multiplier += 0.1
 
-            # if game_modifier == 'Hidden':
-            #     self.number_of_lives = 1
-            # else:
-            #     self.number_of_lives = self.default_number_of_lives
 
             # print(self.game_modifiers)
             
@@ -214,8 +217,8 @@ class Game:
             combo_multiplier = self.combo # otherwise, set the combo_multiplier to equal the combo
 
         # the combo is calculated by taking the length of the string that the player correctly typed and multiplying it by the combo multiplier
-        score_value = len(input_score)
-        self.score += score_value * combo_multiplier
+        score_value = len(input_score) * self.game_modifier_multiplier
+        self.score += int(score_value * combo_multiplier)
             
     # function to repeatedly check for user input
     def typing_input(self, event):

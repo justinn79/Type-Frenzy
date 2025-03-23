@@ -499,9 +499,9 @@ class PreGameSelectMenu:
         self.perfect_icon = pygame.transform.scale(self.perfect_icon, (self.perfect_icon.get_width() * self.icon_scale, self.perfect_icon.get_height() * self.icon_scale))
 
         # game modifier text description
-        self.double_time_text = 'The typing countdown meter is twice as fast. Type the current word quickly before the timer runs out'
-        self.hidden_text = 'The current queued text will not be displayed. Remember that word before it comes into queue.'
-        self.perfect_text = ' You only have one life. Once you submit an incorrect word, it is game over!'
+        self.double_time_text = 'The typing countdown meter is twice as fast. Type the current word quickly before the timer runs out. \n\n Combo Multiplier Value: 1.25'
+        self.hidden_text = 'The current queued text will not be displayed. Remember that word before it comes into queue. \n\n Combo Multiplier Value: 1.15'
+        self.perfect_text = ' One life. Submit an incorrect word, it is game over! Ensure that your input is correct before submitting. \n\n Combo Multiplier Value: 1.10'
 
     def get_modifier_selection(self):
         return self.modifier_selection
