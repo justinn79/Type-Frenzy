@@ -10,6 +10,8 @@ class MainMenu:
         
         self.display_surface = display_surface
         self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 45)
+        self.menu_box_title_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 35)
+        self.menu_box_description_font = pygame.font.Font('fonts/SpaceGrotesk-Medium.ttf', 15)
         self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 20)
 
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 50 instances of the BgParticles() class and put each one in the list "self.bg_particles"
@@ -23,12 +25,19 @@ class MainMenu:
         # ----------------------------------------------------------------------------------------------------------
 
         # Home menu control
-        self.home_menu_options = ['START', 'HOW TO PLAY', 'SETTINGS', 'QUIT']
+        self.home_menu_options = ['START', 'HOW TO PLAY', 'QUIT']
         self.home_menu_index = 0
         self.home_menu_option_count = len(self.home_menu_options)
 
         self.main_menu_screen_state = 'MAIN MENU' # initial main menu screen state
         self.original_main_menu_screen_state =  self.main_menu_screen_state # storing the initial main_menu_screen_state
+
+        # how to play text descriptions
+        self.how_to_play_description_text = 'Type and match the prompted words on the screen.\n\n' \
+        'Lives are shown at the top left of the screen and are lost when submitting an incorrect word.\n\n' \
+        'There is a typing meter at the bottom that depletes overtime but resets after every correct input. \n\n' \
+        'Game modifiers can be selected before you start the game which can increase your combo multiplier. \n\n\n' \
+        'Press ESCAPE on your keyboard to return to the MAIN MENU'
 
     def reset_main_menu_screen_state(self):
         self.main_menu_screen_state = self.original_main_menu_screen_state
@@ -122,11 +131,40 @@ class MainMenu:
             self.display_surface.blit(menu_button_img_scaled, button_rect)
             self.display_surface.blit(text_surf, text_rect) # blit(source, dest)
 
-    def how_to_play_screen(self):
-        pass
+    def how_to_play_screen(self, main_menu_bg_rect):
+        main_menu_bg_rect = main_menu_bg_rect
 
-    def settings_screen(self):
-        pass
+        # menu selection box coordinates
+        menu_selection_box_img_x = main_menu_bg_rect.width // 2 # x coordinate for the center of the background
+        menu_selection_box_img_y = WINDOW_HEIGHT - (main_menu_bg_rect.height // 3) # y coordinate for 2/3 of the height of the background
+
+        # menu selection box scaling
+        self.menu_selection_box_img_scaled = pygame.transform.scale(self.menu_selection_box_img, (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.75))
+
+        # creating a rect of the newly scaled menu selection box image after it is scaled and blitting it onto the screen
+        self.menu_selection_box_img_rect = self.menu_selection_box_img_scaled.get_frect(center=(menu_selection_box_img_x, menu_selection_box_img_y))
+        self.display_surface.blit(self.menu_selection_box_img_scaled, self.menu_selection_box_img_rect)
+
+        # --------------- HOW TO PLAY TITLE TEXT ------------------
+        title_x = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width / 2)
+        title_y = self.menu_selection_box_img_rect.top + 60
+
+        how_to_play_title_text = self.menu_box_title_font.render('HOW TO PLAY', True, COLORS['black'])
+        how_to_play_title_text_rect = how_to_play_title_text.get_frect(center=(title_x, title_y))
+
+        self.display_surface.blit(how_to_play_title_text, how_to_play_title_text_rect)
+
+        # --------------- HOW TO PLAY TEXT DESCRIPTION ------------------
+        description_text_x = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width / 2)
+        description_text_y = how_to_play_title_text_rect.top + 180
+
+        description_text_text = self.menu_box_description_font.render(self.how_to_play_description_text, True, COLORS['black'])
+        description_text_rect = description_text_text.get_frect(center=(description_text_x, description_text_y))
+
+        self.display_surface.blit(description_text_text, description_text_rect)
+
+    # def settings_screen(self):
+    #     pass
 
     def draw_menu(self):
         match self.main_menu_screen_state:
@@ -137,9 +175,9 @@ class MainMenu:
                 # THIS STATE IS HANDLED WITHIN main.py (under 'MAIN MENU' match case)
                 pass
             case 'HOW TO PLAY':
-                self.how_to_play_screen()
-            case 'SETTINGS':
-                self.settings_screen()
+                self.how_to_play_screen(self.scaled_main_menu_bg_rect)
+            # case 'SETTINGS':
+            #     self.settings_screen()
             case 'QUIT':
                 # THIS STATE IS HANDLED WITHIN main.py (under 'MAIN MENU' match case)
                 pass
@@ -388,6 +426,11 @@ class GameOverMenu:
             y_loc = game_modifier_text_rect.y # adding x amount of pixels under the text title of the modifier (displaying it under the modifier title)
             
             self.display_surface.blit(icon_surf, (x_loc, y_loc))
+
+        # if there are no game modifiers selected, then just display the text "None" beside "Game Modifiers used:"
+        if not self.game_modifiers:
+            no_game_modifiers_text = self.font1.render('None', True, COLORS['white'])
+            self.display_surface.blit(no_game_modifiers_text, (game_modifier_text_rect.right + 5, game_modifier_text_rect.y))
 
         # ----------------- MENU SELECTION BOX ---------------------------
         # menu selection box coordinates
