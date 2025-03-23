@@ -42,6 +42,7 @@ class Game:
         self.list_of_queued_texts = []
         self.wordlist_index = 0 # this index is used to append the words from the wordlist to the list_of_queued_texts list (IF DOING THE LOCAL WORD TEXT FILE METHOD)
         self.combo = 0
+        self.highest_combo_value = 0
         self.score = 0
         self.min_word_length = 3
         self.max_word_length = 8
@@ -435,6 +436,9 @@ class Game:
         # if this function is called with increment=True, then add onto the self.combo variable count by 1.
         if increment:
             self.combo += 1
+            # if the current combo is higher than the highest combo value variable, update the highest combo value variable
+            if self.combo > self.highest_combo_value:
+                self.highest_combo_value = self.combo
             # set this grow flag to true for the combo text to dramatically grow
             self.pulse_grow = True
             self.grow_scale = 1 # resettings the grow_scale to ensure that the new combo value will start the pulse grow from the beginning (resetting the pulse for a newly added combo value)

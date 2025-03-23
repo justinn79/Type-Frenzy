@@ -247,10 +247,11 @@ class GameOverMenu:
 
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 100 instances of the BgParticles() class and put each one in the list "self.bg_particles"
 
-        self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 30)
-        self.font2 = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
-        self.score_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
+        self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 40)
+        self.score_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
         self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 20)
+        self.font1 = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
+        self.font2 = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
 
         # ------------------------------ IMAGES FOR THE MAIN MENU ------------------------------------------------------------
         self.main_menu_bg = pygame.image.load('images/assets/main_menu_background.png').convert_alpha()
@@ -286,6 +287,9 @@ class GameOverMenu:
         # score value variable to display
         self.score_value = 0
 
+        # combo value variable to display
+        self.highest_combo_value = 0
+
         # game modifier list to display
         self.game_modifiers = []
 
@@ -317,6 +321,9 @@ class GameOverMenu:
     def fetch_score_value(self, score_value):
         self.score_value = score_value
 
+    def fetch_highest_combo_value(self, highest_combo_value):
+        self.highest_combo_value = highest_combo_value
+
     def fetch_game_modifiers(self, game_modifier_list):
         self.game_modifiers = game_modifier_list
 
@@ -346,19 +353,25 @@ class GameOverMenu:
         game_over_text_y = WINDOW_HEIGHT // 7
 
         game_over_text = self.title_font.render('GAME OVER' , True, COLORS['white'])
-        game_over_text_rect = game_over_text.get_frect(center=(game_over_text_x, game_over_text_y))
+        game_over_text_rect = game_over_text.get_frect(center=(game_over_text_x, game_over_text_y - 20))
 
         self.display_surface.blit(game_over_text, game_over_text_rect)
 
         # ---------------- SCORE DISPLAY TEXT -------------------
         score_text = self.score_font.render('Score: ' + str(self.score_value), True, COLORS['white'])
-        score_text_rect = score_text.get_frect(center=(game_over_text_x, game_over_text_y + 40))
+        score_text_rect = score_text.get_frect(center=(game_over_text_x, game_over_text_y + 30))
 
         self.display_surface.blit(score_text, score_text_rect)
 
+        # ---------------- COMBO DISPLAY TEXT -------------------
+        highest_combo_text = self.font1.render('Highest Combo: ' + str(self.highest_combo_value), True, COLORS['white'])
+        highest_combo_text_rect = highest_combo_text.get_frect(center=(score_text_rect.centerx, score_text_rect.y + 60))
+
+        self.display_surface.blit(highest_combo_text, highest_combo_text_rect)
+
         # ---------------- GAME MODIFIERS DISPLAY TEXT -------------------
-        game_modifier_text = self.font.render('Game Modifiers used: ', True, COLORS['white'])
-        game_modifier_text_rect = game_modifier_text.get_frect(center=(score_text_rect.centerx, score_text_rect.y + 55))
+        game_modifier_text = self.font1.render('Game Modifiers used: ', True, COLORS['white'])
+        game_modifier_text_rect = game_modifier_text.get_frect(center=(highest_combo_text_rect.centerx, highest_combo_text_rect.y + 55))
 
         self.display_surface.blit(game_modifier_text, game_modifier_text_rect)
 
@@ -385,7 +398,7 @@ class GameOverMenu:
         self.menu_selection_box_img_scaled = pygame.transform.scale(self.menu_selection_box_img, (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.75))
 
         # creating a rect of the newly scaled menu selection box image after it is scaled and blitting it onto the screen
-        self.menu_selection_box_img_rect = self.menu_selection_box_img_scaled.get_frect(center=(menu_selection_box_img_x, menu_selection_box_img_y + 80))
+        self.menu_selection_box_img_rect = self.menu_selection_box_img_scaled.get_frect(center=(menu_selection_box_img_x, menu_selection_box_img_y + 90))
         self.display_surface.blit(self.menu_selection_box_img_scaled, self.menu_selection_box_img_rect)
 
         # ---------------- GAME OVER REASON TEXT -------------------
