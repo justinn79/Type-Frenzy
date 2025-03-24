@@ -6,6 +6,7 @@ from screen_flash import *
 from text_fade import *
 from bg_particles import *
 from ui import *
+from audio_manager import *
 
 import random
 import math
@@ -13,7 +14,7 @@ import math
 from wonderwords import RandomWord
 
 class Game:
-    def __init__(self, display_surface):
+    def __init__(self, display_surface, audio_manager):
         # setup
         # pygame.init()
         pygame.font.init()
@@ -23,6 +24,19 @@ class Game:
         pygame.display.set_caption('xType')
         self.clock = pygame.time.Clock()
         self.running = True
+
+        #----------------AUDIO-------------------------
+        self.audio_manager = audio_manager
+        self.sound_volume = 0.2
+        # storing all the different typing sounds in a dictionary
+        self.typing_sounds = {}
+        # retrieving only the typing sounds within the audio dictionary and storing it in the typing sounds dictionary above.
+        for sound_key, value in self.audio_manager.audio.items():
+            if sound_key in ["type_sound1", "type_sound2", "type_sound3", "type_sound4", "type_sound5"]:
+                self.typing_sounds[sound_key] = value
+
+            
+
 
         # font
         self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
@@ -158,8 +172,8 @@ class Game:
         self.player_string_surf_y_original = WINDOW_HEIGHT - (WINDOW_HEIGHT // 6)
         self.player_string_surf_y = self.player_string_surf_y_original
 
-    def reset_game(self, display_surface):
-        self.__init__(display_surface)
+    def reset_game(self, display_surface, audio_manager):
+        self.__init__(display_surface, audio_manager)
 
     def reset_pause_game_state(self):
         self.pause_game = self.original_pause_game_state
@@ -199,6 +213,7 @@ class Game:
 
         # --------------------------------------------- WRONG INPUT --------------------------------------------------------
         elif self.list_of_queued_texts[-1] != self.submit and self.submitted:
+            self.audio_manager.play_sound_effect('combo_break_sound', self.sound_volume)
             # print('WRONG')
             self.shake_text(30) # shake the player text if it is wrong
 
@@ -227,6 +242,10 @@ class Game:
 
             # handles the lower case letters
             if event.unicode.lower() in self.letters and self.can_append_to_player_string: # if the key that was just pressed is a lower case letter that exists in self.letters, then add that to the player_string string variable
+                # typing sound randomizer
+                random_typing_sound_key = random.choice(list(self.typing_sounds.keys()))
+                self.audio_manager.play_sound_effect(random_typing_sound_key, self.sound_volume)
+
                 self.player_string += event.unicode.lower()
 
             # handles the backspace

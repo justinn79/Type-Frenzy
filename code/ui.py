@@ -3,11 +3,16 @@ from support import *
 from bg_particles import *
 from timer import Timer
 
+from audio_manager import *
 
 # ------------------------------------------------- MAIN MENU UI ------------------------------------------------------------------------------------
-class MainMenu:
-    def __init__(self, display_surface):
-        
+class MainMenu():
+    def __init__(self, display_surface, audio_manager):
+
+        #----------------AUDIO-------------------------
+        self.audio_manager = audio_manager
+        self.sound_volume = 0.2
+
         self.display_surface = display_surface
         self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 45)
         self.menu_box_title_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 35)
@@ -49,12 +54,15 @@ class MainMenu:
         # handle input for menu navigation within the home main menu menu
         if keys[pygame.K_DOWN]:
             self.home_menu_index += 1
+            self.audio_manager.play_sound_effect('menu_nav_sound', self.sound_volume)
         elif keys[pygame.K_UP]:
             self.home_menu_index -= 1
+            self.audio_manager.play_sound_effect('menu_nav_sound', self.sound_volume)
 
         # wrap around the index
         self.home_menu_index %= self.home_menu_option_count
         if keys[pygame.K_SPACE]:
+            self.audio_manager.play_sound_effect('menu_select_sound', self.sound_volume)
             # when the player selects one of the options, change the current state of the ui to whatever the player selects.
 
             if self.home_menu_options[self.home_menu_index] == 'START': # if the option that the player chooses is "START" it will bring the user to the 'PRE GAME SELECT' state. so we will just change that string to PRE GAME SELECT
@@ -191,7 +199,12 @@ class MainMenu:
 
 # ------------------------------------------------- PAUSED GAME UI ------------------------------------------------------------------------------------
 class PauseGameMenu:
-    def __init__(self, display_surface):
+    def __init__(self, display_surface, audio_manager):
+
+        #----------------AUDIO-------------------------
+        self.audio_manager = audio_manager
+        self.sound_volume = 0.2
+
         self.display_surface = display_surface
 
         self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 30)
@@ -219,12 +232,15 @@ class PauseGameMenu:
         # handle input for menu navigation within the pause menu
         if keys[pygame.K_DOWN]:
             self.pause_menu_index += 1
+            self.audio_manager.play_sound_effect('menu_nav_sound', self.sound_volume)
         elif keys[pygame.K_UP]:
             self.pause_menu_index -= 1
+            self.audio_manager.play_sound_effect('menu_nav_sound', self.sound_volume)
 
         # wrap around the index
         self.pause_menu_index %= self.pause_menu_option_count
         if keys[pygame.K_SPACE]:
+            self.audio_manager.play_sound_effect('menu_select_sound', self.sound_volume)
             # when the player selects one of the options, change the current state of the ui to whatever the player selects.
             self.pause_menu_screen_state = self.pause_menu_options[self.pause_menu_index]
             
@@ -280,7 +296,12 @@ class PauseGameMenu:
 
 # ------------------------------------------------- GAME OVER UI ------------------------------------------------------------------------------------
 class GameOverMenu:
-    def __init__(self, display_surface):
+    def __init__(self, display_surface, audio_manager):
+
+        #----------------AUDIO-------------------------
+        self.audio_manager = audio_manager
+        self.sound_volume = 0.2
+
         self.display_surface = display_surface
 
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 100 instances of the BgParticles() class and put each one in the list "self.bg_particles"
@@ -371,12 +392,15 @@ class GameOverMenu:
         # handle input for menu navigation within the game_over menu
         if keys[pygame.K_DOWN]:
             self.game_over_menu_index += 1
+            self.audio_manager.play_sound_effect('menu_nav_sound', self.sound_volume)
         elif keys[pygame.K_UP]:
             self.game_over_menu_index -= 1
+            self.audio_manager.play_sound_effect('menu_nav_sound', self.sound_volume)
 
         # wrap around the index
         self.game_over_menu_index %= self.game_over_menu_option_count
         if keys[pygame.K_SPACE]:
+            self.audio_manager.play_sound_effect('menu_select_sound', self.sound_volume)
             # when the player selects one of the options, change the current state of the ui to whatever the player selects.
             self.game_over_menu_screen_state = self.game_over_menu_options[self.game_over_menu_index]
 
@@ -488,7 +512,12 @@ class GameOverMenu:
 
 # ------------------------------------------------- PRE GAME SELECT UI ------------------------------------------------------------------------------------
 class PreGameSelectMenu:
-    def __init__(self, display_surface):
+    def __init__(self, display_surface, audio_manager):
+
+        #----------------AUDIO-------------------------
+        self.audio_manager = audio_manager
+        self.sound_volume = 0.2
+
         self.display_surface = display_surface
 
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 100 instances of the BgParticles() class and put each one in the list "self.bg_particles"
@@ -586,12 +615,15 @@ class PreGameSelectMenu:
         # handle input for menu navigation within the pre_game_select menu
         if keys[pygame.K_DOWN]:
             self.pre_game_select_menu_index += 1
+            self.audio_manager.play_sound_effect('menu_nav_sound', self.sound_volume)
         elif keys[pygame.K_UP]:
             self.pre_game_select_menu_index -= 1
+            self.audio_manager.play_sound_effect('menu_nav_sound', self.sound_volume)
 
         # wrap around the index
         self.pre_game_select_menu_index %= self.pre_game_select_menu_option_count
         if keys[pygame.K_SPACE]:
+            self.audio_manager.play_sound_effect('menu_select_sound', self.sound_volume)
             user_menu_selection = self.pre_game_select_menu_options[self.pre_game_select_menu_index]
             # only update self.pre_game_select_menu_screen_state when the player selects 'PLAY'
             if user_menu_selection == 'PLAY':
@@ -604,6 +636,7 @@ class PreGameSelectMenu:
                     self.modifier_selection.remove(user_menu_selection)
             
         if keys[pygame.K_ESCAPE]:
+            self.audio_manager.play_sound_effect('menu_select_sound', self.sound_volume)
             # RETURN TO THE MAIN MENU
             self.pre_game_select_menu_screen_state = 'MAIN MENU'
 

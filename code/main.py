@@ -2,6 +2,7 @@ from settings import *
 from support import *
 
 from fade_transition import *
+from audio_manager import *
 
 from ui import *
 from game import *
@@ -14,17 +15,24 @@ class Main:
         # fullscreen
         # self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.FULLSCREEN)
 
+        pygame.mixer.init()
         self.clock = pygame.time.Clock()
         self.running = True
+
+        #----------------AUDIO-------------------------
+        self.audio_manager = AudioManager()
+        self.background_music_active = False
+        self.background_music_volume = 0.1
+        self.sound_volume = 0.2
 
         self.main_screen_state = 'MAIN MENU' # this is the initial main_screen_state state
     
         # instances for game states
-        self.game = Game(self.display_surface)
-        self.main_menu = MainMenu(self.display_surface)
-        self.pause_game_menu = PauseGameMenu(self.display_surface)
-        self.game_over_menu = GameOverMenu(self.display_surface)
-        self.pre_game_select_menu = PreGameSelectMenu(self.display_surface)
+        self.game = Game(self.display_surface, self.audio_manager)
+        self.main_menu = MainMenu(self.display_surface, self.audio_manager)
+        self.pause_game_menu = PauseGameMenu(self.display_surface, self.audio_manager)
+        self.game_over_menu = GameOverMenu(self.display_surface, self.audio_manager)
+        self.pre_game_select_menu = PreGameSelectMenu(self.display_surface, self.audio_manager)
 
         # ------------ FADE TRANSITION-------------------
         # instance for fade transitions
@@ -32,7 +40,7 @@ class Main:
 
         self.fade_initiated = False # check if the fade transition has been initiated to prepare for the fade in transition (this bool is used in the main game loop so that the fade does not continuosly occur - we want it to only happen once)
 
-        #--------------------------------------------------
+        #------------------------------------------------
 
         self.game_variables_updated = False
 
@@ -55,6 +63,11 @@ class Main:
 
     def change_states(self, state_name, continue_from_pause=False):
         self.reset_all_menu_states() # resets all the menu states to its original/initial state
+
+        # checking if the state that we are transitioning to is either MAIN MENU or PLAY. if it is, stop all the sounds and set the background music active bool to False to allow a music track to be played once again
+        if state_name == 'MAIN MENU' or state_name == 'PLAY' or state_name == 'GAMEOVER' and not continue_from_pause:
+            self.audio_manager.stop_background_music()
+            self.background_music_active = False
 
         if self.main_screen_state != 'PAUSEGAME':
             self.game_variables_updated = False # sets the game_variables_updated flag back to False so that it can be updated once again if needed
@@ -89,6 +102,11 @@ class Main:
                 
             match self.main_screen_state:
                 case 'MAIN MENU':
+                    # checking if background music is not currently playing. if not, then play the assigned track for that state.
+                    if not self.background_music_active:
+                        self.audio_manager.play_background_music('menu_track', self.background_music_volume)
+                        self.background_music_active = True # setting the background music active bool to True so the audio does not repeatedly get called to play
+                    
                     # when we go back into the main menu screen, reset all the game modifiers so that it is blank when the user goes back into the pre game select menu
                     self.update_game_variables(reset_game_modifiers=True)
                     # ---------------- GETTING UPDATED SCREEN STATE VALUES ------------------------------------------
@@ -122,6 +140,10 @@ class Main:
                     self.fade_in_transition(self.display_surface)
 
                 case 'PLAY':
+                    # checking if background music is not currently playing. if not, then play the assigned track for that state.
+                    if not self.background_music_active:
+                        self.audio_manager.play_background_music('in_game_track', self.background_music_volume)
+                        self.background_music_active = True # setting the background music active bool to True so the audio does not repeatedly get called to play
                     # this function updates the game variables to ensure that the game modifiers that are selected or unselected are on/off accordingly when the game begins
                     self.update_game_variables()
                     # self.game_modifiers = self.pre_game_select_menu.get_modifier_selection()
@@ -140,6 +162,7 @@ class Main:
                         self.game_over_menu.fetch_game_modifiers(self.game.game_modifiers) # fetches the current game modifiers that was being used by the player during this run
                         self.game_over_menu.fetch_highest_combo_value(self.game.highest_combo_value) # fetches the highest combo of the run
                         self.game_over_menu.out_of_lives_game_over() # this function sets the out of lives text before the game over text is displayed
+                        self.audio_manager.play_sound_effect('game_over_sound', self.sound_volume)
                         if self.change_states('GAMEOVER'):
                             continue
 
@@ -152,6 +175,7 @@ class Main:
                         self.game_over_menu.fetch_game_modifiers(self.game.game_modifiers) # fetches the current game modifiers that was being used by the player during this run
                         self.game_over_menu.fetch_highest_combo_value(self.game.highest_combo_value) # fetches the highest combo of the run
                         self.game_over_menu.out_of_time_game_over() # this function sets the out of time text before the game over text is displayed
+                        self.audio_manager.play_sound_effect('game_over_sound', self.sound_volume)
                         if self.change_states('GAMEOVER'):
                             continue
 
@@ -201,7 +225,7 @@ class Main:
                     # -------------- MAIN MENU CHECK ------------------
                     # if the pre_game_select_menu_screen_state in ui.py becomes 'MAIN MENU', change the main_screen_state variable within THIS file to change the state to MAIN MENU (otherwise, handle the other states within the ui.py file)
                     if self.pre_game_select_menu_screen_state == 'MAIN MENU':
-                        self.game.reset_game(self.display_surface) # going to the main menu will restart the game
+                        self.game.reset_game(self.display_surface, self.audio_manager) # going to the main menu will restart the game
                         if self.change_states('MAIN MENU'): # before changing the main_screen_state, call this function to reset the game_over menu's screen state back to its original default value ("") - a reset
                             continue
 
@@ -239,13 +263,13 @@ class Main:
                     # ---------- MAIN MENU CHECK -------------
                     # if the pause_menu_screen_state in ui.py becomes 'MAIN MENU', change the main_screen_state variable within THIS file to change the state to MAIN MENU (otherwise, handle the other states within the ui.py file)
                     if self.pause_menu_screen_state == 'MAIN MENU':
-                        self.game.reset_game(self.display_surface) # going to the main menu will restart the game
+                        self.game.reset_game(self.display_surface, self.audio_manager) # going to the main menu will restart the game
                         if self.change_states('MAIN MENU'): # before changing the main_screen_state, call this function to reset the pause menu's screen state back to its original default value ("") - a reset
                             continue
 
                     # ---------- RESTART CHECK -------------
                     if self.pause_menu_screen_state == 'RESTART':
-                        self.game.reset_game(self.display_surface)
+                        self.game.reset_game(self.display_surface, self.audio_manager)
                         if self.change_states('PLAY'): # before changing the main_screen_state, call this function to reset the pause menu's screen state back to its original default value ("") - a reset
                             continue
 
@@ -275,13 +299,13 @@ class Main:
                     # -------------- MAIN MENU CHECK ------------------
                     # if the game_over_menu_screen_state in ui.py becomes 'MAIN MENU', change the main_screen_state variable within THIS file to change the state to MAIN MENU (otherwise, handle the other states within the ui.py file)
                     if self.game_over_menu_screen_state == 'MAIN MENU':
-                        self.game.reset_game(self.display_surface) # going to the main menu will restart the game
+                        self.game.reset_game(self.display_surface, self.audio_manager) # going to the main menu will restart the game
                         if self.change_states('MAIN MENU'): # before changing the main_screen_state, call this function to reset the game_over menu's screen state back to its original default value ("") - a reset
                             continue
 
                     # -------------- TRY AGAIN CHECK -------------------
                     if self.game_over_menu_screen_state == 'TRY AGAIN':
-                        self.game.reset_game(self.display_surface)
+                        self.game.reset_game(self.display_surface, self.audio_manager)
                         if self.change_states('PLAY'): # before changing the main_screen_state, call this function to reset the game_over menu's screen state back to its original default value ("") - a reset
                             continue
                     
