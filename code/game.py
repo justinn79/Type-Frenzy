@@ -25,6 +25,9 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
+        # background
+        self.main_menu_bg = pygame.image.load('images/assets/main_menu_background.png').convert_alpha()
+
         #----------------AUDIO-------------------------
         self.audio_manager = audio_manager
         self.sound_volume = 0.2
@@ -34,9 +37,6 @@ class Game:
         for sound_key, value in self.audio_manager.audio.items():
             if sound_key in ["type_sound1", "type_sound2", "type_sound3", "type_sound4", "type_sound5"]:
                 self.typing_sounds[sound_key] = value
-
-            
-
 
         # font
         self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
@@ -63,7 +63,7 @@ class Game:
 
         # changing game variables (game modifier variables)
         # --- Perfect Modifier ------
-        self.default_number_of_lives = 5 # 5 is the default number of lives
+        self.default_number_of_lives = 4
         self.number_of_lives = self.default_number_of_lives # this is a copy variable of the number of lives unless it changes through user selection
         # --- Double Time Modifier ------
         self.default_depletion_rate = 0.25 # 0.25 is the default depletion rate
@@ -266,6 +266,18 @@ class Game:
                 self.pause_game = True
 
     # --------------------------------- GAME DRAWING FUNCTIONS -----------------------------------------------------------------------------------#
+
+    def draw_bg(self):
+        # SCALING
+        self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
+        self.scaled_main_menu_bg_rect = self.scaled_main_menu_bg.get_frect(topleft=(0,0))
+        self.display_surface.blit(self.scaled_main_menu_bg, self.scaled_main_menu_bg_rect)
+
+    def draw_particle_bg(self):
+        # drawing the particles in the background
+        for bg_particle in self.bg_particles:
+            bg_particle.update()
 
     def create_queued_text_rects(self, num_rects, rect_width, rect_height):
         rects = []
@@ -546,7 +558,8 @@ class Game:
     # --------------------------------- GAME DRAWING LOOP FUNCTION -----------------------------------------------------------------------------------#
 
     def draw_game(self):
-    
+        self.draw_bg()
+        self.draw_particle_bg()
         # -------------queued text surface and the texts itself-------------------------------
         # drawing the queued text rects
         self.draw_queued_text_rects(self.queued_text_rects)

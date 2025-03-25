@@ -64,7 +64,7 @@ class Main:
     def change_states(self, state_name, continue_from_pause=False):
         self.reset_all_menu_states() # resets all the menu states to its original/initial state
 
-        # checking if the state that we are transitioning to is either MAIN MENU or PLAY. if it is, stop all the sounds and set the background music active bool to False to allow a music track to be played once again
+        # checking if the state that we are transitioning to is either MAIN MENU, PLAY or GAMEOVER. if it is, stop all the sounds and set the background music active bool to False to allow a music track to be played once again
         if state_name == 'MAIN MENU' or state_name == 'PLAY' or state_name == 'GAMEOVER' and not continue_from_pause:
             self.audio_manager.stop_background_music()
             self.background_music_active = False
@@ -202,9 +202,6 @@ class Main:
                     # draw
                     # ------- IN GAME --------
                     self.game.display_surface.fill(COLORS['background'])
-                    # drawing the particles in the background
-                    for bg_particle in self.game.bg_particles:
-                        bg_particle.update()
                         
                     # self.game.all_sprites.draw(self.display_surface)
                     self.game.draw_game()

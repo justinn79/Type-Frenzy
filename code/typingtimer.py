@@ -46,7 +46,7 @@ class TypingTimer:
                                         self.bar_height) # height of the bar
         
 
-        pygame.draw.rect(self.display_surface, COLORS['yellow'], typing_bar_outline_rect, 1, border_radius = 10) # rect(surface, color, rect, width=0, border_radius=0)
+        pygame.draw.rect(self.display_surface, COLORS['white'], typing_bar_outline_rect, 3, border_radius = 10) # rect(surface, color, rect, width=0, border_radius=0)
         pygame.draw.rect(self.display_surface, COLORS['white'], typing_bar_filling_rect, border_radius = 10) # rect(surface, color, rect, width=0, border_radius=0)
 
         # particle effect at the end of the filling bar

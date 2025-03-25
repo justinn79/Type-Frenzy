@@ -474,9 +474,16 @@ class GameOverMenu:
         # game_over_reason_text_x = game_over_text_x
         # game_over_reason_text_y = game_over_text_y + 50
 
-        game_over_reason_text = self.font2.render(str(self.game_over_reason), True, COLORS['black'])
+        game_over_reason_text = self.font2.render(str(self.game_over_reason), True, COLORS['white'])
         game_over_reason_text_rect = game_over_reason_text.get_frect(center=(self.menu_selection_box_img_rect.centerx, self.menu_selection_box_img_rect.y + 75))
 
+        game_over_reason_bg_surf = pygame.Surface((game_over_reason_text_rect.width + 50, game_over_reason_text_rect.height + 10), pygame.SRCALPHA)
+        game_over_reason_bg_surf.fill((0, 0, 0, 0)) # black with full opacity
+        pygame.draw.rect(game_over_reason_bg_surf, COLORS['black'], game_over_reason_bg_surf.get_rect(), border_radius=10)
+
+        game_over_reason_bg_rect = game_over_reason_bg_surf.get_frect(center=(game_over_reason_text_rect.center))
+
+        self.display_surface.blit(game_over_reason_bg_surf, game_over_reason_bg_rect)
         self.display_surface.blit(game_over_reason_text, game_over_reason_text_rect)
 
         # MENU SELECTION OPTIONS
