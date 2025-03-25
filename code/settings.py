@@ -12,6 +12,7 @@ COLORS = {
     'darkgray': '#2c3e50',
     'white': '#ffffff',
     'blue': 'blue',
+    'darkblue': '#1b4f72',
     'yellow': 'yellow',
     'purple': 'purple',
     'lightblue': '#2e86c1',

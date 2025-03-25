@@ -66,7 +66,7 @@ class Game:
         self.default_number_of_lives = 4
         self.number_of_lives = self.default_number_of_lives # this is a copy variable of the number of lives unless it changes through user selection
         # --- Double Time Modifier ------
-        self.default_depletion_rate = 0.25 # 0.25 is the default depletion rate
+        self.default_depletion_rate = 0.20 # 0.20 is the default depletion rate
         self.depletion_rate = self.default_depletion_rate # this is a copy variable of the depletion rate unless it changes through user selection
         # # --- Hidden Modifier ------
         # self.default_number_of_lives = 5 # 5 is the default number of lives
@@ -107,7 +107,7 @@ class Game:
         # -------------- WORD LIST FROM A RANDOM WORD LIBRARY --------------------------------
         # initial setup with loading the texts into the list of queued texts list to prepare the game
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            word = self.word_generator.word()
+            word = self.word_generator.word(word_max_length=self.max_word_length, include_parts_of_speech=["nouns", "adjectives", "verbs"])
             if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters)
                 self.list_of_queued_texts.append(word)
 
@@ -182,7 +182,7 @@ class Game:
 
     def update_queued_word_list_WORD_LIBRARY(self, min_word_length, max_word_length):
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            word = self.word_generator.word()
+            word = self.word_generator.word(word_max_length=self.max_word_length, include_parts_of_speech=["nouns", "adjectives", "verbs"])
             if min_word_length <= len(word) <= max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters):
                 self.list_of_queued_texts.insert(0, word)
 
@@ -327,7 +327,7 @@ class Game:
                 pygame.draw.rect(rect, COLORS['lightblue'], rect.get_rect(), border_radius=10) # rect(surface, color, rect, width=0, border_radius=0, border_top_left_radius=-1,
 
                 # rect border properties
-                border_color = COLORS['darkpurple']
+                border_color = COLORS['darkblue']
                 border_width = 5
 
             pygame.draw.rect(rect, border_color, rect.get_rect(), border_radius=10, width=border_width)
