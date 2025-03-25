@@ -17,13 +17,13 @@ class MainMenu():
         self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 45)
         self.menu_box_title_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 35)
         self.menu_box_description_font = pygame.font.Font('fonts/SpaceGrotesk-Medium.ttf', 15)
-        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 20)
+        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
 
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 50 instances of the BgParticles() class and put each one in the list "self.bg_particles"
 
         # ------------------------------ IMAGES FOR THE MAIN MENU ------------------------------------------------------------
         self.main_menu_bg = pygame.image.load('images/assets/main_menu_background.png').convert_alpha()
-        self.main_menu_game_title_border = pygame.image.load('images/assets/game_title_border.png').convert_alpha()
+        self.game_title_banner = pygame.image.load('images/assets/game_title_banner.png').convert_alpha()
         self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
         self.menu_button_img = pygame.image.load('images/assets/menu_button.png').convert_alpha()
 
@@ -38,11 +38,11 @@ class MainMenu():
         self.original_main_menu_screen_state =  self.main_menu_screen_state # storing the initial main_menu_screen_state
 
         # how to play text descriptions
-        self.how_to_play_description_text = 'Type and match the prompted words on the screen.\n\n' \
-        'Lives are shown at the top left of the screen and are lost when submitting an incorrect word.\n\n' \
-        'There is a typing meter at the bottom that depletes overtime but resets after every correct input. \n\n' \
-        'Game modifiers can be selected before you start the game which can increase your combo multiplier. \n\n\n' \
-        'Press ESCAPE on your keyboard to return to the MAIN MENU'
+        self.how_to_play_description_text = ' - Type and match the prompted words on the screen.\n\n' \
+        ' - Lives are shown at the top left of the screen and are lost when submitting an incorrect word.\n\n' \
+        ' - There is a typing meter at the bottom that depletes overtime but resets after every correct input. \n\n' \
+        ' - Game modifiers can be selected before you start the game which can increase your combo multiplier. \n\n\n' \
+        ' - Press ESCAPE on your keyboard to return to the MAIN MENU'
 
     def reset_main_menu_screen_state(self):
         self.main_menu_screen_state = self.original_main_menu_screen_state
@@ -88,17 +88,18 @@ class MainMenu():
 
     def draw_game_title(self):
         title_x = WINDOW_WIDTH // 2
-        title_y = WINDOW_HEIGHT // 4
+        title_y = WINDOW_HEIGHT // 5
 
-        title_surf = self.title_font.render('xType', True, COLORS['white'])
-        title_rect = title_surf.get_frect(center=(title_x, title_y))
+        # title_surf = self.title_font.render('Type Mania', True, COLORS['white'])
+        # title_rect = title_surf.get_frect(center=(title_x, title_y))
 
         # scaling the main menu game title border to align with the width and height of the game title
-        main_menu_game_title_border_scaled = pygame.transform.scale(self.main_menu_game_title_border, (title_rect.width * 3, title_rect.height * 5))
-        main_menu_game_title_border_scaled_rect = main_menu_game_title_border_scaled.get_frect(center=(title_x, title_y))
+        # main_menu_game_title_border_scaled = pygame.transform.scale(self.main_menu_game_title_border, (5,5))
+        game_title_banner_scaled = pygame.transform.scale(self.game_title_banner, (self.game_title_banner.width * 1.5,self.game_title_banner.height * 1.5))
+        game_title_banner_rect = game_title_banner_scaled.get_frect(center=(title_x, title_y))
 
-        self.display_surface.blit(main_menu_game_title_border_scaled, main_menu_game_title_border_scaled_rect)
-        self.display_surface.blit(title_surf, title_rect)
+        self.display_surface.blit(game_title_banner_scaled, game_title_banner_rect)
+        # self.display_surface.blit(title_surf, title_rect)
         
     def main_menu_selection(self, main_menu_bg_rect, index, options):
         main_menu_bg_rect = main_menu_bg_rect
@@ -208,7 +209,7 @@ class PauseGameMenu:
         self.display_surface = display_surface
 
         self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 30)
-        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 20)
+        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
 
         # ------------------------------ IMAGES FOR THE MAIN MENU ------------------------------------------------------------
         self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
@@ -308,7 +309,7 @@ class GameOverMenu:
 
         self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 40)
         self.score_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
-        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 20)
+        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
         self.font1 = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
         self.font2 = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
 
@@ -571,9 +572,9 @@ class PreGameSelectMenu:
         self.perfect_icon = pygame.transform.scale(self.perfect_icon, (self.perfect_icon.get_width() * self.icon_scale, self.perfect_icon.get_height() * self.icon_scale))
 
         # game modifier text description
-        self.double_time_text = 'The typing countdown meter is twice as fast. Type the current word quickly before the timer runs out. \n\n Combo Multiplier Value: 1.25'
-        self.hidden_text = 'The current queued text will not be displayed. Remember that word before it comes into queue. \n\n Combo Multiplier Value: 1.15'
-        self.perfect_text = ' One life. Submit an incorrect word, it is game over! Ensure that your input is correct before submitting. \n\n Combo Multiplier Value: 1.10'
+        self.double_time_text = 'The typing countdown meter is twice as fast. Type the current word quickly before the timer runs out. \n\n Combo Multiplier Value: 1.25x'
+        self.hidden_text = 'The current queued text will not be displayed. Remember that word before it comes into queue. \n\n Combo Multiplier Value: 1.15x'
+        self.perfect_text = ' One life. Submit an incorrect word, it is game over! Ensure that your input is correct before submitting. \n\n Combo Multiplier Value: 1.10x'
 
     def get_modifier_selection(self):
         return self.modifier_selection

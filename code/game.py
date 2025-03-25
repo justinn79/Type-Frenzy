@@ -21,7 +21,7 @@ class Game:
 
         self.display_surface = display_surface
 
-        pygame.display.set_caption('xType')
+        pygame.display.set_caption('Type Mania')
         self.clock = pygame.time.Clock()
         self.running = True
 
