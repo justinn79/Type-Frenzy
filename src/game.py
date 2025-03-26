@@ -20,7 +20,7 @@ class Game:
         self.display_surface = display_surface
 
         # game title and game icon
-        self.game_icon = pygame.image.load('images/game_icon/game_icon.ico').convert_alpha()
+        self.game_icon = pygame.image.load('assets/images/game_icon/game_icon.ico').convert_alpha()
         pygame.display.set_icon(self.game_icon)
         pygame.display.set_caption('Type Frenzy')
 
@@ -28,7 +28,7 @@ class Game:
         self.running = True
 
         # background
-        self.main_menu_bg = pygame.image.load('images/assets/main_menu_background.png').convert_alpha()
+        self.main_menu_bg = pygame.image.load('assets/images/ui/main_menu_background.png').convert_alpha()
 
         #----------------AUDIO-------------------------
         self.audio_manager = audio_manager
@@ -41,7 +41,7 @@ class Game:
                 self.typing_sounds[sound_key] = value
 
         # font
-        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
+        self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 30)
 
         # bool variable to check if the player has paused the game
         self.pause_game = False
@@ -115,7 +115,7 @@ class Game:
 
         # -------------- WORD LIST FROM A PRE DEFINED WORD TEXT FILE --------------------------------
         #creating the wordlist list
-        self.wordlist = read_words_from_file('word_storage/words.txt')
+        self.wordlist = read_words_from_file('assets/word_storage/words.txt')
         # initial setup with loading the texts into the list of queued texts list to prepare the game
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
             word = random.choice(self.wordlist)
@@ -126,15 +126,15 @@ class Game:
         # game modifier icon images
         self.icon_scale = 2
         # double time mod icon
-        self.double_time_icon = pygame.image.load('images/game_mod_icons/double_time_icon.png').convert_alpha()
+        self.double_time_icon = pygame.image.load('assets/images/game_mod_icons/double_time_icon.png').convert_alpha()
         self.double_time_icon = pygame.transform.scale(self.double_time_icon, (self.double_time_icon.get_width() * self.icon_scale, self.double_time_icon.get_height() * self.icon_scale))
 
         # hidden mod icon
-        self.hidden_icon = pygame.image.load('images/game_mod_icons/hidden_icon.png').convert_alpha()
+        self.hidden_icon = pygame.image.load('assets/images/game_mod_icons/hidden_icon.png').convert_alpha()
         self.hidden_icon = pygame.transform.scale(self.hidden_icon, (self.hidden_icon.get_width() * self.icon_scale, self.hidden_icon.get_height() * self.icon_scale))
 
         # perfect mod icon
-        self.perfect_icon = pygame.image.load('images/game_mod_icons/perfect_icon.png').convert_alpha()
+        self.perfect_icon = pygame.image.load('assets/images/game_mod_icons/perfect_icon.png').convert_alpha()
         self.perfect_icon = pygame.transform.scale(self.perfect_icon, (self.perfect_icon.get_width() * self.icon_scale, self.perfect_icon.get_height() * self.icon_scale))
 
         self.load_game()
@@ -191,11 +191,11 @@ class Game:
 
     # --------------------------------- GAME LOGIC FUNCTIONS------------------------------------------------------------------------------------------#
 
-    def update_queued_word_list_WORD_LIBRARY(self, min_word_length, max_word_length):
-        while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            word = self.word_generator.word(word_max_length=self.max_word_length, include_parts_of_speech=["nouns", "adjectives", "verbs"])
-            if min_word_length <= len(word) <= max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters):
-                self.list_of_queued_texts.insert(0, word)
+    # def update_queued_word_list_WORD_LIBRARY(self, min_word_length, max_word_length):
+    #     while len(self.list_of_queued_texts) < self.number_of_queued_texts:
+    #         word = self.word_generator.word(word_max_length=self.max_word_length, include_parts_of_speech=["nouns", "adjectives", "verbs"])
+    #         if min_word_length <= len(word) <= max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters):
+    #             self.list_of_queued_texts.insert(0, word)
 
     def update_queued_word_list_TEXTFILE(self):
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
@@ -394,7 +394,7 @@ class Game:
 
         # using a sine wave for the pulsating text effect
         scale_factor = 1 + 0.1 * math.sin(self.frame_count * 2 * math.pi / 1000)  # adjust 1000 for speed
-        self.scaled_font = pygame.font.Font('fonts/Bungee-Regular.ttf', int(30 * scale_factor))
+        self.scaled_font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', int(30 * scale_factor))
         text_surface = self.scaled_font.render(text, True, COLORS['white'])
 
         # text surface dimensions
@@ -454,8 +454,8 @@ class Game:
 
         # creating the surface of the combo string
         font_scale = 1
-        x_font = pygame.font.Font('fonts/Bungee-Regular.ttf', int(25 * font_scale))
-        combo_font = pygame.font.Font('fonts/Bungee-Regular.ttf', int(42 * font_scale))
+        x_font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', int(25 * font_scale))
+        combo_font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', int(42 * font_scale))
 
         x_string_surf = x_font.render("x", True, COLORS["white"])
 

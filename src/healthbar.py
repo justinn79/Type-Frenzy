@@ -7,21 +7,21 @@ class HealthBar:
 
         self.display_surface = pygame.display.get_surface()
 
-        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
+        self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 25)
 
         # out of lives bool
         self.out_of_lives = False
 
         # full heart image
         self.scale = 2.5
-        self.heart_image = pygame.image.load('images/healthbar/fullheart.png').convert_alpha()
+        self.heart_image = pygame.image.load('assets/images/healthbar/fullheart.png').convert_alpha()
         self.heart_image_scaled = pygame.transform.scale(self.heart_image, (self.heart_image.get_width() * self.scale, self.heart_image.get_height() * self.scale))
         self.heart_image_scaled_HEIGHT = self.heart_image_scaled.get_height()
         self.heart_image_scaled_WIDTH = self.heart_image_scaled.get_width()
 
         # empty heart image
         self.scale = 2.5
-        self.empty_heart_image = pygame.image.load('images/healthbar/emptyheart.png').convert_alpha()
+        self.empty_heart_image = pygame.image.load('assets/images/healthbar/emptyheart.png').convert_alpha()
         self.empty_heart_image_scaled = pygame.transform.scale(self.empty_heart_image, (self.empty_heart_image.get_width() * self.scale, self.empty_heart_image.get_height() * self.scale))
         self.empty_heart_image_scaled_HEIGHT = self.empty_heart_image_scaled.get_height()
         self.empty_heart_image_scaled_WIDTH = self.empty_heart_image_scaled.get_width()

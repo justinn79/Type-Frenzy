@@ -5,27 +5,41 @@ from timer import Timer
 
 from audio_manager import *
 
+class AllImageImports():
+    def __init__(self):
+        # ------------------------------ IMAGES FOR THE MAIN MENU ------------------------------------------------------------
+        self.main_menu_bg = pygame.image.load('assets/images/ui/main_menu_background.png').convert_alpha()
+        self.game_title_banner = pygame.image.load('assets/images/ui/game_title_banner.png').convert_alpha()
+        self.menu_selection_box_img = pygame.image.load('assets/images/ui/menu_selection_box.png').convert_alpha()
+        self.menu_button_img = pygame.image.load('assets/images/ui/menu_button.png').convert_alpha()
+
+        # icons for the game modifiers
+        self.double_time_icon = pygame.image.load('assets/images/game_mod_icons/double_time_icon.png').convert_alpha()
+        self.hidden_icon = pygame.image.load('assets/images/game_mod_icons/hidden_icon.png').convert_alpha()
+        self.perfect_icon = pygame.image.load('assets/images/game_mod_icons/perfect_icon.png').convert_alpha()
+
+        # buttons for the game modifiers
+        self.menu_game_modifier_button_img = pygame.image.load('assets/images/ui/menu_game_modifier_button.png').convert_alpha()
+        self.unselected_box_img = pygame.image.load('assets/images/ui/unselected_box.png').convert_alpha()
+        self.selected_box_img = pygame.image.load('assets/images/ui/selected_box.png').convert_alpha()
+
 # ------------------------------------------------- MAIN MENU UI ------------------------------------------------------------------------------------
-class MainMenu():
+class MainMenu(AllImageImports):
     def __init__(self, display_surface, audio_manager):
+
+        super().__init__()
 
         #----------------AUDIO-------------------------
         self.audio_manager = audio_manager
         self.sound_volume = 0.2
 
         self.display_surface = display_surface
-        self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 45)
-        self.menu_box_title_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 35)
-        self.menu_box_description_font = pygame.font.Font('fonts/SpaceGrotesk-Medium.ttf', 15)
-        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
+        self.title_font = pygame.font.Font('assets/fonts/PressStart2P-Regular.ttf', 45)
+        self.menu_box_title_font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 35)
+        self.menu_box_description_font = pygame.font.Font('assets/fonts/SpaceGrotesk-Medium.ttf', 15)
+        self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 25)
 
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 50 instances of the BgParticles() class and put each one in the list "self.bg_particles"
-
-        # ------------------------------ IMAGES FOR THE MAIN MENU ------------------------------------------------------------
-        self.main_menu_bg = pygame.image.load('images/assets/main_menu_background.png').convert_alpha()
-        self.game_title_banner = pygame.image.load('images/assets/game_title_banner.png').convert_alpha()
-        self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
-        self.menu_button_img = pygame.image.load('images/assets/menu_button.png').convert_alpha()
 
         # ----------------------------------------------------------------------------------------------------------
 
@@ -199,8 +213,10 @@ class MainMenu():
         self.draw_menu()
 
 # ------------------------------------------------- PAUSED GAME UI ------------------------------------------------------------------------------------
-class PauseGameMenu:
+class PauseGameMenu(AllImageImports):
     def __init__(self, display_surface, audio_manager):
+
+        super().__init__()
 
         #----------------AUDIO-------------------------
         self.audio_manager = audio_manager
@@ -208,12 +224,8 @@ class PauseGameMenu:
 
         self.display_surface = display_surface
 
-        self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 30)
-        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
-
-        # ------------------------------ IMAGES FOR THE MAIN MENU ------------------------------------------------------------
-        self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
-        self.menu_button_img = pygame.image.load('images/assets/menu_button.png').convert_alpha()
+        self.title_font = pygame.font.Font('assets/fonts/PressStart2P-Regular.ttf', 30)
+        self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 25)
 
         # pause menu control
         self.pause_menu_options = ['CONTINUE', 'RESTART', 'MAIN MENU']
@@ -296,8 +308,10 @@ class PauseGameMenu:
         self.draw(self.pause_menu_index, self.pause_menu_options)
 
 # ------------------------------------------------- GAME OVER UI ------------------------------------------------------------------------------------
-class GameOverMenu:
+class GameOverMenu(AllImageImports):
     def __init__(self, display_surface, audio_manager):
+
+        super().__init__()
 
         #----------------AUDIO-------------------------
         self.audio_manager = audio_manager
@@ -307,16 +321,11 @@ class GameOverMenu:
 
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 100 instances of the BgParticles() class and put each one in the list "self.bg_particles"
 
-        self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 40)
-        self.score_font = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
-        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
-        self.font1 = pygame.font.Font('fonts/Bungee-Regular.ttf', 25)
-        self.font2 = pygame.font.Font('fonts/Bungee-Regular.ttf', 30)
-
-        # ------------------------------ IMAGES FOR THE MAIN MENU ------------------------------------------------------------
-        self.main_menu_bg = pygame.image.load('images/assets/main_menu_background.png').convert_alpha()
-        self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
-        self.menu_button_img = pygame.image.load('images/assets/menu_button.png').convert_alpha()
+        self.title_font = pygame.font.Font('assets/fonts/PressStart2P-Regular.ttf', 40)
+        self.score_font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 30)
+        self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 25)
+        self.font1 = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 25)
+        self.font2 = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 30)
 
         # game over menu control
         self.game_over_menu_options = ['TRY AGAIN', 'MAIN MENU']
@@ -333,15 +342,12 @@ class GameOverMenu:
         # game modifier icon images
         self.icon_scale = 1
         # double time mod icon
-        self.double_time_icon = pygame.image.load('images/game_mod_icons/double_time_icon.png').convert_alpha()
         self.double_time_icon = pygame.transform.scale(self.double_time_icon, (self.double_time_icon.get_width() * self.icon_scale, self.double_time_icon.get_height() * self.icon_scale))
 
         # hidden mod icon
-        self.hidden_icon = pygame.image.load('images/game_mod_icons/hidden_icon.png').convert_alpha()
         self.hidden_icon = pygame.transform.scale(self.hidden_icon, (self.hidden_icon.get_width() * self.icon_scale, self.hidden_icon.get_height() * self.icon_scale))
 
         # perfect mod icon
-        self.perfect_icon = pygame.image.load('images/game_mod_icons/perfect_icon.png').convert_alpha()
         self.perfect_icon = pygame.transform.scale(self.perfect_icon, (self.perfect_icon.get_width() * self.icon_scale, self.perfect_icon.get_height() * self.icon_scale))
 
         # score value variable to display
@@ -519,9 +525,11 @@ class GameOverMenu:
         self.ignore_input_timer.update()
 
 # ------------------------------------------------- PRE GAME SELECT UI ------------------------------------------------------------------------------------
-class PreGameSelectMenu:
+class PreGameSelectMenu(AllImageImports):
     def __init__(self, display_surface, audio_manager):
 
+        super().__init__()
+        
         #----------------AUDIO-------------------------
         self.audio_manager = audio_manager
         self.sound_volume = 0.2
@@ -530,21 +538,12 @@ class PreGameSelectMenu:
 
         self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 100 instances of the BgParticles() class and put each one in the list "self.bg_particles"
 
-        self.font = pygame.font.Font('fonts/Bungee-Regular.ttf', 20)
+        self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 20)
 
-        self.title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 30)
-        self.play_button_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 20)
-        self.game_modifier_title_font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 25)
-        self.game_modifier_text_font = pygame.font.Font('fonts/SpaceGrotesk-Medium.ttf', 15)
-
-        # ------------------------------ IMAGES FOR THE PRE GAME MENU ------------------------------------------------------------
-        self.main_menu_bg = pygame.image.load('images/assets/main_menu_background.png').convert_alpha()
-        self.menu_selection_box_img = pygame.image.load('images/assets/menu_selection_box.png').convert_alpha()
-        self.menu_button_img = pygame.image.load('images/assets/menu_button.png').convert_alpha()
-        self.menu_game_modifier_button_img = pygame.image.load('images/assets/menu_game_modifier_button.png').convert_alpha()
-
-        self.unselected_box_img = pygame.image.load('images/assets/unselected_box.png').convert_alpha()
-        self.selected_box_img = pygame.image.load('images/assets/selected_box.png').convert_alpha()
+        self.title_font = pygame.font.Font('assets/fonts/PressStart2P-Regular.ttf', 30)
+        self.play_button_font = pygame.font.Font('assets/fonts/PressStart2P-Regular.ttf', 20)
+        self.game_modifier_title_font = pygame.font.Font('assets/fonts/PressStart2P-Regular.ttf', 25)
+        self.game_modifier_text_font = pygame.font.Font('assets/fonts/SpaceGrotesk-Medium.ttf', 15)
 
         # selection box scaling
         self.unselected_box_surf = pygame.transform.scale(self.unselected_box_img, (self.unselected_box_img.width * 2, self.unselected_box_img.height * 2))
@@ -566,16 +565,14 @@ class PreGameSelectMenu:
 
         # game modifier icon images
         self.icon_scale = 1.5
+
         # double time mod icon
-        self.double_time_icon = pygame.image.load('images/game_mod_icons/double_time_icon.png').convert_alpha()
         self.double_time_icon = pygame.transform.scale(self.double_time_icon, (self.double_time_icon.get_width() * self.icon_scale, self.double_time_icon.get_height() * self.icon_scale))
 
         # hidden mod icon
-        self.hidden_icon = pygame.image.load('images/game_mod_icons/hidden_icon.png').convert_alpha()
         self.hidden_icon = pygame.transform.scale(self.hidden_icon, (self.hidden_icon.get_width() * self.icon_scale, self.hidden_icon.get_height() * self.icon_scale))
 
         # perfect mod icon
-        self.perfect_icon = pygame.image.load('images/game_mod_icons/perfect_icon.png').convert_alpha()
         self.perfect_icon = pygame.transform.scale(self.perfect_icon, (self.perfect_icon.get_width() * self.icon_scale, self.perfect_icon.get_height() * self.icon_scale))
 
         # game modifier text description
