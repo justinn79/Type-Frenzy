@@ -22,10 +22,10 @@ class Game:
         self.display_surface = display_surface
 
         # game title and game icon
-        self.game_icon = pygame.image.load('images/assets/game_icon.png').convert_alpha()
+        self.game_icon = pygame.image.load('images/game_icon/game_icon.ico').convert_alpha()
         pygame.display.set_icon(self.game_icon)
         pygame.display.set_caption('Type Frenzy')
-        
+
         self.clock = pygame.time.Clock()
         self.running = True
 
