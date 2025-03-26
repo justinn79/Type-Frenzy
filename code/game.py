@@ -11,8 +11,6 @@ from audio_manager import *
 import random
 import math
 
-from wonderwords import RandomWord
-
 class Game:
     def __init__(self, display_surface, audio_manager):
         # setup
@@ -105,13 +103,22 @@ class Game:
         # groups
         self.all_sprites = pygame.sprite.Group()
 
-        # random word instance
-        self.word_generator = RandomWord()
+        # # random word instance
+        # self.word_generator = RandomWord()
 
-        # -------------- WORD LIST FROM A RANDOM WORD LIBRARY --------------------------------
+        # # -------------- WORD LIST FROM A RANDOM WORD LIBRARY --------------------------------
+        # # initial setup with loading the texts into the list of queued texts list to prepare the game
+        # while len(self.list_of_queued_texts) < self.number_of_queued_texts:
+        #     word = self.word_generator.word(word_max_length=self.max_word_length, include_parts_of_speech=["nouns", "adjectives", "verbs"])
+        #     if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters)
+        #         self.list_of_queued_texts.append(word)
+
+        # -------------- WORD LIST FROM A PRE DEFINED WORD TEXT FILE --------------------------------
+        #creating the wordlist list
+        self.wordlist = read_words_from_file('word_storage/words.txt')
         # initial setup with loading the texts into the list of queued texts list to prepare the game
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            word = self.word_generator.word(word_max_length=self.max_word_length, include_parts_of_speech=["nouns", "adjectives", "verbs"])
+            word = random.choice(self.wordlist)
             if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters)
                 self.list_of_queued_texts.append(word)
 
@@ -191,10 +198,10 @@ class Game:
                 self.list_of_queued_texts.insert(0, word)
 
     def update_queued_word_list_TEXTFILE(self):
-        if len(self.list_of_queued_texts) < self.number_of_queued_texts:
-            self.list_of_queued_texts.insert(0, self.wordlist[self.wordlist_index])
-            self.wordlist_index += 1
-            # print(self.list_of_queued_texts)
+        while len(self.list_of_queued_texts) < self.number_of_queued_texts:
+            word = random.choice(self.wordlist)
+            if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters)
+                self.list_of_queued_texts.insert(0, word)
 
     def check_user_input(self):
         # capping the length of the player_string so that the user cannot exceed a certain amount
@@ -585,8 +592,8 @@ class Game:
 
     def game_logic(self):
         self.check_user_input()
-        # self.update_queued_word_list_TEXTFILE()
-        self.update_queued_word_list_WORD_LIBRARY(self.min_word_length, self.max_word_length)
+        self.update_queued_word_list_TEXTFILE()
+        # self.update_queued_word_list_WORD_LIBRARY(self.min_word_length, self.max_word_length)
         # self.activate_game_modifiers()
         # print(self.wordlist_index)
         
