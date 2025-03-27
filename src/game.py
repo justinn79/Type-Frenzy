@@ -178,6 +178,8 @@ class Game:
 
         # ------------ PLAYER INPUT BOX COORDINATES --------------------------
         # creating the coordinates of where the player_string will be displayed on screen (THIS IS USED IN draw_player_input_text())
+        self.input_box = pygame.image.load('assets/images/ui/input_box.png').convert_alpha()
+        self.input_box_scaled = pygame.transform.scale(self.input_box, (self.input_box.get_width() * 1.7, self.input_box.get_height() * 1.5))
         self.player_string_surf_x_original = WINDOW_WIDTH // 2
         self.player_string_surf_x = self.player_string_surf_x_original
         self.player_string_surf_y_original = WINDOW_HEIGHT - (WINDOW_HEIGHT // 6)
@@ -421,15 +423,18 @@ class Game:
         # getting the rect of the text_surface
         self.player_string_surf_rect = self.player_string_surf.get_frect(center=(self.player_string_surf_x, self.player_string_surf_y))
         
-        # background for the player input text
-        bg_player_string_rect = pygame.FRect(
-            self.player_string_surf_x - self.text_rect_size_WIDTH / 2,  # subtract half the width to center
-            self.player_string_surf_y - self.text_rect_size_HEIGHT / 2,  # subtract half the height to center
-            self.text_rect_size_WIDTH,
-            self.text_rect_size_HEIGHT
-        )
+        # # background for the player input text
+        input_box_rect = self.input_box_scaled.get_frect()
+        input_box_rect.center = (self.player_string_surf_rect.centerx, self.player_string_surf_rect.centery)
 
-        pygame.draw.rect(self.display_surface, COLORS['blue'], bg_player_string_rect, 5, border_radius=10)
+        # bg_player_string_rect = pygame.FRect(
+        #     self.player_string_surf_x - self.text_rect_size_WIDTH / 2,  # subtract half the width to center
+        #     self.player_string_surf_y - self.text_rect_size_HEIGHT / 2,  # subtract half the height to center
+        #     self.text_rect_size_WIDTH,
+        #     self.text_rect_size_HEIGHT
+        # )
+
+        self.display_surface.blit(self.input_box_scaled, input_box_rect)
         self.display_surface.blit(self.player_string_surf, self.player_string_surf_rect)
 
     def shake_text(self, timer=None):
