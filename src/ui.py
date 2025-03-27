@@ -1,9 +1,9 @@
-from settings import *
-from support import *
-from bg_particles import *
-from timer import Timer
+from src.settings import *
+from src.support import *
+from src.bg_particles import *
+from src.timer import Timer
 
-from audio_manager import *
+from src.audio_manager import *
 
 class AllImageImports():
     def __init__(self):

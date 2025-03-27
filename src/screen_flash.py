@@ -1,5 +1,5 @@
-from settings import *
-from support import *
+from src.settings import *
+from src.support import *
 
 class ScreenFlash:
     def __init__(self, display_surface):

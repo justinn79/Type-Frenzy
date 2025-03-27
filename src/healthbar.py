@@ -1,6 +1,6 @@
-from settings import *
-from timer import Timer
-from support import *
+from src.settings import *
+from src.timer import Timer
+from src.support import *
 
 class HealthBar:
     def __init__(self, number_of_lives):

@@ -1,4 +1,4 @@
-from settings import *
+from src.settings import *
 
 class TextFade:
     def __init__(self):

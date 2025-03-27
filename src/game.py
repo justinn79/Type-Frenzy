@@ -1,12 +1,12 @@
-from settings import *
-from support import *
-from healthbar import *
-from typingtimer import *
-from screen_flash import *
-from text_fade import *
-from bg_particles import *
-from ui import *
-from audio_manager import *
+from src.settings import *
+from src.support import *
+from src.healthbar import *
+from src.typingtimer import *
+from src.screen_flash import *
+from src.text_fade import *
+from src.bg_particles import *
+from src.ui import *
+from src.audio_manager import *
 
 import random
 import math

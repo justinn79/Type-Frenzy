@@ -1,5 +1,5 @@
-from settings import *
-from support import *
+from src.settings import *
+from src.support import *
 import random
 
 class BgParticles:

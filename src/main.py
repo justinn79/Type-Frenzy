@@ -1,11 +1,11 @@
-from settings import *
-from support import *
+from src.settings import *
+from src.support import *
 
-from fade_transition import *
-from audio_manager import *
+from src.fade_transition import *
+from src.audio_manager import *
 
-from ui import *
-from game import *
+from src.ui import *
+from src.game import *
 
 class Main:
     def __init__(self):
@@ -325,6 +325,6 @@ class Main:
 
         pygame.quit()
 
-if __name__ == '__main__':
-    main = Main()
-    main.run()
+# if __name__ == '__main__':
+#     main = Main()
+#     main.run()

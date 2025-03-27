@@ -1,7 +1,7 @@
-from settings import *
-from timer import Timer
-from support import *
-from particles import *
+from src.settings import *
+from src.timer import Timer
+from src.support import *
+from src.particles import *
 
 class TypingTimer:
     def __init__(self, depletion_rate):

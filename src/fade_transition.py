@@ -2,7 +2,7 @@
 import pygame
 import time
 
-from settings import *
+from src.settings import *
 
 class FadeTransition:
 

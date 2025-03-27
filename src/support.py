@@ -1,4 +1,4 @@
-from settings import *
+from src.settings import *
 
 def read_words_from_file(filename):
         with open(filename, 'r') as file:
