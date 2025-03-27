@@ -9,7 +9,6 @@ class HealthBar:
 
         self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 25)
 
-        # out of lives bool
         self.out_of_lives = False
 
         # full heart image
@@ -30,11 +29,7 @@ class HealthBar:
         self.left = WINDOW_WIDTH // 22
         self.top = WINDOW_HEIGHT // 18
 
-        # health bar visuals
         self.border_radius = 10
-
-        # offset spacing for each placement of the heart image
-        # self.heart_image_offset_spacing = 30
 
         # number of hearts / the number of lives
         self.number_of_hearts_total = number_of_lives
@@ -42,43 +37,37 @@ class HealthBar:
 
         # heart spacing offset
         self.heart_offset_spacing = 10
-        self.added_heart_spacing = self.number_of_hearts_total * self.heart_offset_spacing # this will be added onto the health_bar_region_WIDTH to accomodate for the spacing in between each heart
+        self.added_heart_spacing = self.number_of_hearts_total * self.heart_offset_spacing
 
         # health bar region dimensions
-         # we are multiplying these two values below because the region width depends on how many hearts the player has. we are also adding the heart spacing from above
         self.health_bar_region_WIDTH = (self.heart_image_scaled_WIDTH * self.number_of_hearts_total) + self.added_heart_spacing + self.heart_offset_spacing
         self.health_bar_region_HEIGHT = WINDOW_HEIGHT // 18
 
         # health bar rect
-        self.health_bar_region_rect = pygame.FRect(self.left, self.top, self.health_bar_region_WIDTH, self.heart_image_scaled_HEIGHT) # pygame.FRect(length, top, width, height)
+        self.health_bar_region_rect = pygame.FRect(self.left, self.top, self.health_bar_region_WIDTH, self.heart_image_scaled_HEIGHT)
 
     def draw(self):
         # --------------------- DRAWING THE HEARTS/LIVES -----------------------------------
-        pygame.draw.rect(self.display_surface, COLORS['darkgray'], self.health_bar_region_rect, 0, self.border_radius) # rect(surface, color, rect, width=0, border_radius=0)
+        pygame.draw.rect(self.display_surface, COLORS['darkgray'], self.health_bar_region_rect, 0, self.border_radius)
 
         # drawing the empty hearts under the full hearts
         for i in range(self.number_of_hearts_total):
-            # we are adding (i * self.heart_image_scaled_WIDTH) to make sure that for every heart, it is being spaced by the same amount of pixels as their width.
-            # additionally, self.heart_offset_spacing is being added to space each heart apart with its value
             x_cord = self.left + (i * (self.heart_image_scaled_WIDTH + self.heart_offset_spacing)) + self.heart_offset_spacing 
             y_cord = self.top
-            empty_heart_image_rect = self.empty_heart_image_scaled.get_frect(topleft=(x_cord, y_cord)) # pygame.FRect(length, top, width, height)
+            empty_heart_image_rect = self.empty_heart_image_scaled.get_frect(topleft=(x_cord, y_cord))
             self.display_surface.blit(self.empty_heart_image_scaled, empty_heart_image_rect)
 
         # ------------------------- 'LIVES' text above the hearts --------------------------------------
-        # 'lives' text surf
         lives_text_surf = self.font.render('LIVES', True, COLORS["white"])
-        # getting the rect of the 'lives' text surface
-        lives_text_rect = lives_text_surf.get_frect(center=(self.health_bar_region_rect.x + (lives_text_surf.get_width() / 2), self.health_bar_region_rect.centery - 35)) # (self.health_bar_region_rect.x + (self.health_bar_region_rect.width / 3) places it a third of the way down the width of the bar
+
+        lives_text_rect = lives_text_surf.get_frect(center=(self.health_bar_region_rect.x + (lives_text_surf.get_width() / 2), self.health_bar_region_rect.centery - 35))
         self.display_surface.blit(lives_text_surf, lives_text_rect)
 
         # drawing the full hearts
         for i in range(self.number_of_hearts_variable):
-            # we are adding (i * self.heart_image_scaled_WIDTH) to make sure that for every heart, it is being spaced by the same amount of pixels as their width.
-            # additionally, self.heart_offset_spacing is being added to space each heart apart with its value
             x_cord = self.left + (i * (self.heart_image_scaled_WIDTH + self.heart_offset_spacing)) + self.heart_offset_spacing 
             y_cord = self.top
-            heart_image_rect = self.heart_image_scaled.get_frect(topleft=(x_cord, y_cord)) # pygame.FRect(length, top, width, height)
+            heart_image_rect = self.heart_image_scaled.get_frect(topleft=(x_cord, y_cord))
             self.display_surface.blit(self.heart_image_scaled, heart_image_rect)
 
     def losing_hearts(self, amount):

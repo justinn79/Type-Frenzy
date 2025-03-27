@@ -4,11 +4,7 @@ from src.support import *
 class AudioManager:
     def __init__(self):
         pygame.mixer.init()
-        # ---------------- GAME SOUNDS -----------------------------
-        self.audio = audio_importer('assets/audio') # a variable that holds all the audio files in a dictionary where "audio_importer()" from the 'support.py' file extracts them from the 'audio' folder
-
-        # changing the volume of the sounds
-        # self.audio['menu_track'].set_volume(0.1)
+        self.audio = audio_importer('assets/audio') 
 
     def play_background_music(self, track_name, volume):
         self.audio[track_name].set_volume(volume)

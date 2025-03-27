@@ -13,7 +13,6 @@ import math
 
 class Game:
     def __init__(self, display_surface, audio_manager):
-        # setup
         # pygame.init()
         pygame.font.init()
 
@@ -40,7 +39,6 @@ class Game:
             if sound_key in ["type_sound1", "type_sound2", "type_sound3", "type_sound4", "type_sound5"]:
                 self.typing_sounds[sound_key] = value
 
-        # font
         self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 30)
 
         # bool variable to check if the player has paused the game
@@ -53,10 +51,10 @@ class Game:
         self.player_string_limit = 12
         self.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
         self.submit = ""
-        self.submitted = False # bool value to check if the player has submitted an input
+        self.submitted = False
         self.number_of_queued_texts = 5
         self.list_of_queued_texts = []
-        self.wordlist_index = 0 # this index is used to append the words from the wordlist to the list_of_queued_texts list (IF DOING THE LOCAL WORD TEXT FILE METHOD)
+        self.wordlist_index = 0
         self.combo = 0
         self.highest_combo_value = 0
         self.score = 0
@@ -66,13 +64,10 @@ class Game:
         # changing game variables (game modifier variables)
         # --- Perfect Modifier ------
         self.default_number_of_lives = 4
-        self.number_of_lives = self.default_number_of_lives # this is a copy variable of the number of lives unless it changes through user selection
+        self.number_of_lives = self.default_number_of_lives
         # --- Double Time Modifier ------
-        self.default_depletion_rate = 0.20 # 0.20 is the default depletion rate
-        self.depletion_rate = self.default_depletion_rate # this is a copy variable of the depletion rate unless it changes through user selection
-        # # --- Hidden Modifier ------
-        # self.default_number_of_lives = 5 # 5 is the default number of lives
-        # self.number_of_lives = self.default_number_of_lives # this is a copy variable of the number of lives unless it changes through user selection
+        self.default_depletion_rate = 0.20
+        self.depletion_rate = self.default_depletion_rate
 
         # variables that are constantly checked/updated (used to check for the game over state)
         self.out_of_lives = False
@@ -84,34 +79,24 @@ class Game:
 
         # combo text growing variables
         self.pulse_grow = False
-        self.pulse_complete = False # we only want the text to pulse once, after that, then stop the pulse
+        self.pulse_complete = False
 
         self.growth_rate = 0.1
         self.max_scale = 3
         self.min_scale = 1
-        self.grow_scale = 1 # starts at grow_scale 1 to retain its original size
+        self.grow_scale = 1
 
         # game settings
-        self.text_rect_size_WIDTH = WINDOW_WIDTH // 3 # the queued and player_input string text rect WIDTH size
-        self.text_rect_size_HEIGHT = 50 # the queued and player_input string text rect HEIGHT size
+        self.text_rect_size_WIDTH = WINDOW_WIDTH // 3
+        self.text_rect_size_HEIGHT = 50
 
         # game modifiers
-        self.game_modifiers = [] # this variable is constantly being updated in the "PRE GAME SELECT" state in main.py (it is constantly fetching the game_modifiers list from ui.py within the PreGameSelect class)
+        self.game_modifiers = [] 
 
         # game modifier multiplier
         self.game_modifier_multiplier = 1
         # groups
         self.all_sprites = pygame.sprite.Group()
-
-        # # random word instance
-        # self.word_generator = RandomWord()
-
-        # # -------------- WORD LIST FROM A RANDOM WORD LIBRARY --------------------------------
-        # # initial setup with loading the texts into the list of queued texts list to prepare the game
-        # while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-        #     word = self.word_generator.word(word_max_length=self.max_word_length, include_parts_of_speech=["nouns", "adjectives", "verbs"])
-        #     if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters)
-        #         self.list_of_queued_texts.append(word)
 
         # -------------- WORD LIST FROM A PRE DEFINED WORD TEXT FILE --------------------------------
         #creating the wordlist list
@@ -119,7 +104,7 @@ class Game:
         # initial setup with loading the texts into the list of queued texts list to prepare the game
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
             word = random.choice(self.wordlist)
-            if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters)
+            if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts:
                 self.list_of_queued_texts.append(word)
 
         # ------------- GAME SETUP -------------------
@@ -141,7 +126,6 @@ class Game:
         
     def load_game(self):
 
-        # list of the queued text rectangles to be drawn
         self.queued_text_rects = self.create_queued_text_rects(5, self.text_rect_size_WIDTH, self.text_rect_size_HEIGHT)
 
         for game_modifier in self.game_modifiers:
@@ -157,15 +141,11 @@ class Game:
                 self.number_of_lives = 1
                 self.game_modifier_multiplier += 0.1
 
-
-            # print(self.game_modifiers)
             
         if 'Double Time' not in self.game_modifiers:
             self.depletion_rate = self.default_depletion_rate
         if 'Perfect' not in self.game_modifiers:
             self.number_of_lives = self.default_number_of_lives
-        # if 'Hidden' not in self.game_modifiers:
-        #     self.depletion_rate = self.default_depletion_rate
 
         # instances
         self.healthbar = HealthBar(self.number_of_lives)
@@ -173,7 +153,7 @@ class Game:
         self.screenflash = ScreenFlash(self.display_surface)
         self.textfade = TextFade()
 
-        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create x instances of the BgParticles() class and put each one in the list "self.bg_particles"
+        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)]
 
 
         # ------------ PLAYER INPUT BOX COORDINATES --------------------------
@@ -193,16 +173,10 @@ class Game:
 
     # --------------------------------- GAME LOGIC FUNCTIONS------------------------------------------------------------------------------------------#
 
-    # def update_queued_word_list_WORD_LIBRARY(self, min_word_length, max_word_length):
-    #     while len(self.list_of_queued_texts) < self.number_of_queued_texts:
-    #         word = self.word_generator.word(word_max_length=self.max_word_length, include_parts_of_speech=["nouns", "adjectives", "verbs"])
-    #         if min_word_length <= len(word) <= max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters):
-    #             self.list_of_queued_texts.insert(0, word)
-
     def update_queued_word_list_TEXTFILE(self):
         while len(self.list_of_queued_texts) < self.number_of_queued_texts:
             word = random.choice(self.wordlist)
-            if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts: # word.isalpha() checks if the word is alphabetical (no non letter characters)
+            if self.min_word_length <= len(word) <= self.max_word_length and word.isalpha() and word not in self.list_of_queued_texts:
                 self.list_of_queued_texts.insert(0, word)
 
     def check_user_input(self):
@@ -210,51 +184,47 @@ class Game:
         if len(self.player_string) >= self.player_string_limit:
             self.can_append_to_player_string = False
         else:
-            self.can_append_to_player_string = True # this flag is used in the game loop to check whether or not the "player_string" can be added onto or not
+            self.can_append_to_player_string = True
 
         # --------------------------------------------- CORRECT INPUT --------------------------------------------------------
         # checks if the next word is equal to the player input string
         if self.list_of_queued_texts[-1] == self.submit and self.submitted:
-            # print('correct')
             self.calculate_score(self.list_of_queued_texts[-1])
-            self.list_of_queued_texts.pop(-1) # remove that word from the list of queued text
-            self.player_string = '' # resets the player string to get ready for the next word
-            self.typingtimer.reset_typing_timer() # resets the typing timer when the player string is correct
+            self.list_of_queued_texts.pop(-1)
+            self.player_string = ''
+            self.typingtimer.reset_typing_timer()
             self.draw_combo_count(increment=True)
-            self.textfade.alpha = 255 # resets the alpha value for the text fade back to its original value (255) - this is only matters when the user selects the 'Hidden' game modifier
-            self.submitted = False # after doing the CORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
+            self.textfade.alpha = 255
+            self.submitted = False
 
         # --------------------------------------------- WRONG INPUT --------------------------------------------------------
         elif self.list_of_queued_texts[-1] != self.submit and self.submitted:
             self.audio_manager.play_sound_effect('combo_break_sound', self.sound_volume)
-            # print('WRONG')
-            self.shake_text(30) # shake the player text if it is wrong
+            self.shake_text(30)
 
             # health logic
-            self.healthbar.losing_hearts(1) # decrement the number of hearts
+            self.healthbar.losing_hearts(1)
 
             self.screenflash.screen_flash('red')
             self.draw_combo_count(reset=True)
-            self.submitted = False # after doing the INCORRECT player input check to the queued text, we want to set this back to False so that this if statement doesnt continuously loop
+            self.submitted = False 
 
     def calculate_score(self, input_score):
-        # if the current combo is 1, just keep the combo multiplier at 1 because multiplying the score by 0 will just result in a value of 0.
+        
         if self.combo == 0:
             combo_multiplier = 1
         else:
-            combo_multiplier = self.combo # otherwise, set the combo_multiplier to equal the combo
+            combo_multiplier = self.combo
 
-        # the combo is calculated by taking the length of the string that the player correctly typed and multiplying it by the combo multiplier
         score_value = len(input_score) * self.game_modifier_multiplier
         self.score += int(score_value * combo_multiplier)
             
-    # function to repeatedly check for user input
     def typing_input(self, event):
         
         if event.type == pygame.KEYDOWN:
 
             # handles the lower case letters
-            if event.unicode.lower() in self.letters and self.can_append_to_player_string: # if the key that was just pressed is a lower case letter that exists in self.letters, then add that to the player_string string variable
+            if event.unicode.lower() in self.letters and self.can_append_to_player_string:
                 # typing sound randomizer
                 random_typing_sound_key = random.choice(list(self.typing_sounds.keys()))
                 self.audio_manager.play_sound_effect(random_typing_sound_key, self.sound_volume)
@@ -263,11 +233,11 @@ class Game:
 
             # handles the backspace
             if event.key == pygame.K_BACKSPACE and len(self.player_string) > 0:
-                self.player_string = self.player_string[:-1] # this just gets rid of the last character in the "self.player_string" string variable
+                self.player_string = self.player_string[:-1]
 
             # handles the enter or space key
             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                if self.player_string != '': # when the player string is empty, dont submit the player string
+                if self.player_string != '':
                     self.submit = self.player_string
                     self.submitted = True
 
@@ -281,22 +251,19 @@ class Game:
     # --------------------------------- GAME DRAWING FUNCTIONS -----------------------------------------------------------------------------------#
 
     def draw_bg(self):
-        # SCALING
         self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         self.scaled_main_menu_bg_rect = self.scaled_main_menu_bg.get_frect(topleft=(0,0))
         self.display_surface.blit(self.scaled_main_menu_bg, self.scaled_main_menu_bg_rect)
 
     def draw_particle_bg(self):
-        # drawing the particles in the background
         for bg_particle in self.bg_particles:
             bg_particle.update()
 
     def create_queued_text_rects(self, num_rects, rect_width, rect_height):
         rects = []
-        spacing = 10  # space between each rectangle
+        spacing = 10
 
-        # region width and region height (the area we want these rectangles to be drawn in)
         region_width = WINDOW_WIDTH // 3
         region_height = WINDOW_HEIGHT // 3
 
@@ -317,29 +284,23 @@ class Game:
 
         # making sure the rectangles do not exceed the width of the restricted area
         if rect_width > restricted_width:
-            rect_width = restricted_width  # adjust width to fit the restricted area if it exceeds
+            rect_width = restricted_width
 
         for i in range(num_rects):
 
             # if it is the last rectangle (the next word for the player to type) then have it look different than the rest
             if (i + 1) == num_rects:
-                # create a rectangle surface
-                rect = pygame.Surface((rect_width + 25, rect_height), pygame.SRCALPHA) # pygame.SRCALPHA adds transparency in the surface
+                rect = pygame.Surface((rect_width + 25, rect_height), pygame.SRCALPHA)
 
-                # draw rect on the surface
-                pygame.draw.rect(rect, COLORS['orange'], rect.get_rect(), border_radius=10) # rect(surface, color, rect, width=0, border_radius=0, border_top_left_radius=-1,
+                pygame.draw.rect(rect, COLORS['orange'], rect.get_rect(), border_radius=10)
 
-                # rect border properties
                 border_color = COLORS['darkorange']
                 border_width = 5
             else: # otherwise, normally just make the rectangles like this
-                # create a rectangle surface
-                rect = pygame.Surface((rect_width, rect_height), pygame.SRCALPHA) # pygame.SRCALPHA adds transparency in the surface
+                rect = pygame.Surface((rect_width, rect_height), pygame.SRCALPHA)
 
-                # draw rect on the surface
-                pygame.draw.rect(rect, COLORS['lightblue'], rect.get_rect(), border_radius=10) # rect(surface, color, rect, width=0, border_radius=0, border_top_left_radius=-1,
+                pygame.draw.rect(rect, COLORS['lightblue'], rect.get_rect(), border_radius=10)
 
-                # rect border properties
                 border_color = COLORS['darkblue']
                 border_width = 5
 
@@ -350,9 +311,7 @@ class Game:
             text_y = start_y + i * (rect_height + spacing)
             rect_pos = rect.get_frect(center=(text_x, text_y))
 
-            # append the rect and its position to the list
             rects.append((rect, rect_pos, i))
-            # print(rect_pos)
 
         return rects
     
@@ -362,77 +321,51 @@ class Game:
 
     def draw_queued_text(self, rects):
         for rect, rect_pos, i in rects:
-            #creating the text surf
             queued_text_surf = self.font.render(self.list_of_queued_texts[i], True, COLORS['white'])
 
-            # get the center of the rectangle (rect_pos is the top-left corner of the rectangle)
             rect_center = rect_pos.center
-            
-            # CHECK THIS FROM HERE ALL THE WAY DOWN 
 
-            # calculate the position for the text (centered inside the rectangle)
             text_x = rect_center[0] - queued_text_surf.get_width() // 2
             text_y = rect_center[1] - queued_text_surf.get_height() // 2
 
             text_rect = queued_text_surf.get_rect()
-            text_rect.center = rect_center  # align the center of the text to the center of the rect
-
-            # pygame.draw.circle(self.display_surface, COLORS['red'], (text_rect.centerx, text_rect.centery), 5) # using this red circle to check location of coordinate
+            text_rect.center = rect_center
             
-            # draw the text CODE HERE
-            # if the current queued text matches the last queued text in the list (which is the next text that the player has to input), then make the text pulsate
             if self.list_of_queued_texts[i] == self.list_of_queued_texts[-1]:
                 self.draw_pulsating_text(self.list_of_queued_texts[i], (text_rect.centerx, text_rect.centery))
-            # otherwise, just blit the text normally
             else:
                 self.display_surface.blit(queued_text_surf, (text_x, text_y))
 
     def draw_pulsating_text(self, text, center_position):
 
-        # initialize frame_count as an attribute of the function if it doesn't exist 
         if not hasattr(self, "frame_count"):
-            self.frame_count = 0  # initialize the counter (frame count for the speed of the pulse)
-            # i am using the 'hasattr' method to do a check everytime this 'draw_pulsating_text' function is called to PREVENT 'frame_count' from being overwritten and set back to 0. i want to preserve the value from when it was called to the very end
+            self.frame_count = 0
 
         # using a sine wave for the pulsating text effect
-        scale_factor = 1 + 0.1 * math.sin(self.frame_count * 2 * math.pi / 1000)  # adjust 1000 for speed
+        scale_factor = 1 + 0.1 * math.sin(self.frame_count * 2 * math.pi / 1000)
         self.scaled_font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', int(30 * scale_factor))
         text_surface = self.scaled_font.render(text, True, COLORS['white'])
 
-        # text surface dimensions
         text_width = text_surface.get_width()
         text_height = text_surface.get_height()
 
-        # adjusting position to center the text based on its new size
         text_position = (center_position[0] - text_width // 2, center_position[1] - text_height // 2)
 
-        # if the game modifier "Hidden" is active, we want the queued text to fade
         if 'Hidden' in self.game_modifiers:
             text_surface = self.textfade.fading_text(text_surface)
 
-        # Draw the text on the screen at the new position
         self.display_surface.blit(text_surface, text_position)
 
-        # incrementing the frame_count value to give it that pulsating effect
-        self.frame_count += 20 # edit this value to decrease or increase the speed of the pulse
+        self.frame_count += 20
 
     def draw_player_input_text(self):
 
         self.player_string_surf = self.font.render(self.player_string, True, COLORS["white"])
 
-        # getting the rect of the text_surface
         self.player_string_surf_rect = self.player_string_surf.get_frect(center=(self.player_string_surf_x, self.player_string_surf_y))
         
-        # # background for the player input text
         input_box_rect = self.input_box_scaled.get_frect()
         input_box_rect.center = (self.player_string_surf_rect.centerx, self.player_string_surf_rect.centery)
-
-        # bg_player_string_rect = pygame.FRect(
-        #     self.player_string_surf_x - self.text_rect_size_WIDTH / 2,  # subtract half the width to center
-        #     self.player_string_surf_y - self.text_rect_size_HEIGHT / 2,  # subtract half the height to center
-        #     self.text_rect_size_WIDTH,
-        #     self.text_rect_size_HEIGHT
-        # )
 
         self.display_surface.blit(self.input_box_scaled, input_box_rect)
         self.display_surface.blit(self.player_string_surf, self.player_string_surf_rect)
@@ -443,21 +376,20 @@ class Game:
             self.shake_timer = timer
 
         if self.shake:
-            if self.shake_timer > 0: # if the shake timer is still above 0, decrement the value by 1 and apply the shake offset
+            if self.shake_timer > 0:
                 self.shake_timer -= 1
-                self.player_string_surf_x -= random.randint(-2, 2) # shake offset position
-                self.player_string_surf_y -= random.randint(-1, 1) # shake offset position
+                self.player_string_surf_x -= random.randint(-2, 2)
+                self.player_string_surf_y -= random.randint(-1, 1)
 
-            if self.shake_timer <= 0: # once the shake timer hits 0, put the player text back in its original spot
+            if self.shake_timer <= 0:
                 self.player_string_surf_x = self.player_string_surf_x_original
                 self.player_string_surf_y = self.player_string_surf_y_original
-                self.shake = False # set self.shake to false so that this function wont be active again until the player inputs another wrong text (which gives this function another timer value to activate the function)
+                self.shake = False 
 
     def draw_combo_count(self, increment=None, reset=None):
             
         # --------------------------setting up the combo string before it takes on the grow effect----------------------------
 
-        # creating the surface of the combo string
         font_scale = 1
         x_font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', int(25 * font_scale))
         combo_font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', int(42 * font_scale))
@@ -466,40 +398,33 @@ class Game:
 
         combo_string_surf = combo_font.render(str(self.combo), True, COLORS["white"])
 
-        # combining the combo string and the "x" string together with a new surface (they both have different sizes so we are doing this approach)
-        combined_width = x_string_surf.get_width() + combo_string_surf.get_width() + 5  # add space between them
-        combined_height = max(x_string_surf.get_height(), combo_string_surf.get_height()) # getting the max height between the two to ensure that the height fits both
-        # this is the combined surface for both text surfs
+        combined_width = x_string_surf.get_width() + combo_string_surf.get_width() + 5
+        combined_height = max(x_string_surf.get_height(), combo_string_surf.get_height())
         combined_surface = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
 
-        #blitting both the "x" and combo string onto the new surface
-        combined_surface.blit(x_string_surf, (0, combined_height - x_string_surf.get_height() - 5)) # y value = combined_height - x_string_surf.get_height() - because we are blitting it from the top left so we want the full height of the combined height minus the height of the string were blitting (in this case, the "x" string) to put it at the bottom left of the surface
-        combined_surface.blit(combo_string_surf, (x_string_surf.get_width() + 5, 0)) # we want to blit this combo_string_surf at an x value equal to "x_string_surf.get_width" so it is blitted at the right of it. otherwise, it will overlap each other. we are also adding + 5 as an offset
+        combined_surface.blit(x_string_surf, (0, combined_height - x_string_surf.get_height() - 5))
+        combined_surface.blit(combo_string_surf, (x_string_surf.get_width() + 5, 0))
         
         bottomleft_x = WINDOW_WIDTH // 22
         bottomleft_y = WINDOW_HEIGHT - WINDOW_HEIGHT // 16
 
-        # if this function is called with reset=True, then reset the combo to 0 (when the player gets the input string wrong)
         if reset:
             self.combo = 0
 
-        # if this function is called with increment=True, then add onto the self.combo variable count by 1.
         if increment:
             self.combo += 1
-            # if the current combo is higher than the highest combo value variable, update the highest combo value variable
             if self.combo > self.highest_combo_value:
                 self.highest_combo_value = self.combo
-            # set this grow flag to true for the combo text to dramatically grow
             self.pulse_grow = True
-            self.grow_scale = 1 # resettings the grow_scale to ensure that the new combo value will start the pulse grow from the beginning (resetting the pulse for a newly added combo value)
-            self.pulse_complete = False # setting the pulse_complete flag back to False to ensure that the pulse has not yet started for the current / newly incremented combo value
+            self.grow_scale = 1 
+            self.pulse_complete = False
         
         # --------------------------GIVES THE COMBO STRING SURFACE THAT POP GROW EFFECT ------------------------------
         if self.pulse_grow:
             
             # growing phase
             if self.grow_scale < self.max_scale and not self.pulse_complete:
-                self.grow_scale += self.growth_rate # increment the scale by the growth rate
+                self.grow_scale += self.growth_rate 
 
             # once its at max scale, set pulse_complete to true
             if self.grow_scale >= self.max_scale and not self.pulse_complete:
@@ -507,46 +432,36 @@ class Game:
 
             # shrinking phase
             if self.grow_scale > self.min_scale and self.pulse_complete:
-                self.grow_scale -= self.growth_rate # decrement the scale by the growth rate
+                self.grow_scale -= self.growth_rate
 
             # once it reaches the min scale and the pulse has been complete, stop the pulse and reset the variables
             if self.grow_scale <= self.min_scale and self.pulse_complete:
                 self.grow_scale = 1
                 self.pulse_complete = False
-                self.pulse_grow = False # set the pulse_grow to False to exit the pulse_grow logic
+                self.pulse_grow = False
 
-            # scaling the newly combined_surface with the new grow_scale
             combined_surface = pygame.transform.scale(combined_surface, 
                                             (int(combined_surface.get_width() * self.grow_scale),
                                              int(combined_surface.get_height() * self.grow_scale)))
 
-
-        # -------- DRAWING THE COMBO STRING (we are drawing after the grow effect check, if the combo is not incremented, it will skip all the code above and go directly below to draw it on the screen----------------------
-        # getting the rect of the combined surface to be at a specified location (bottomleft_x, bottomleft_y)
-        # this rect will change depending on if the "combined_surface" is altered by the pulse_grow effect above (which is why we do the drawing last. just in case the pulse_grow effect does get applied).
-        # combined_rect will not get effected with the self.grow_scale above if it is not being applied because the code before the pulse_grow is always being iterated meaning combined surface is always being recalculated with the correct dimensions
         combined_rect = combined_surface.get_frect(center=(bottomleft_x, bottomleft_y))
         
         self.display_surface.blit(combined_surface, combined_rect)
             
     def draw_score(self):
-        # creating the surface of the score
-
         score_text_surf = self.font.render(("Score:"), True, COLORS["white"])
 
         score_surf = self.font.render(str(self.score), True, COLORS["white"])
 
-
-        # combining the score_text string and the score_surf string together with a new surface
-        combined_width = score_text_surf.get_width() + score_surf.get_width() + 5  # add space between them
-        combined_height = max(score_text_surf.get_height(), score_surf.get_height()) # getting the max height between the two to ensure that the height fits both
-        # this is the combined surface for both text surfs
+        combined_width = score_text_surf.get_width() + score_surf.get_width() + 5
+        combined_height = max(score_text_surf.get_height(), score_surf.get_height())
+        
         combined_surface = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
 
-        #blitting both the score_text_surf and score_surf strings onto the new surface
-        combined_surface.blit(score_text_surf, (0, 0))
-        combined_surface.blit(score_surf, (score_text_surf.get_width() + 5, 0)) # blitting the score_surf to the right of score_text_surf. so we are getting the width of score_text_surf with an offset of + 5 and using that as the x coordinate of our score_surf
         
+        combined_surface.blit(score_text_surf, (0, 0))
+        combined_surface.blit(score_surf, (score_text_surf.get_width() + 5, 0))
+
         topright_x = WINDOW_WIDTH - 175
         topright_y = 50
 
@@ -555,10 +470,9 @@ class Game:
         self.display_surface.blit(combined_surface, combined_rect)
    
     def draw_game_modifiers(self, game_modifier):
-        icon_spacing = 70 # pixel spacing between each icon
+        icon_spacing = 70
         for i in range(len(game_modifier)):
 
-            # checking what the current game modifier within the iteration it is. depending on what it is on the current iteration, change the icon_surf icon to its corresponding game modifier
             if game_modifier[i] == 'Double Time':
                 icon_surf = self.double_time_icon
             if game_modifier[i] == 'Hidden':
@@ -566,8 +480,8 @@ class Game:
             if game_modifier[i] == 'Perfect':
                 icon_surf = self.perfect_icon
 
-            x_loc = self.healthbar.health_bar_region_rect.x + (i * icon_spacing) # getting the horizontal distance of the current icon
-            y_loc = self.healthbar.health_bar_region_rect.y + 50 # adding x amount of pixels under the healthbar region (displaying it under the health bar region)
+            x_loc = self.healthbar.health_bar_region_rect.x + (i * icon_spacing)
+            y_loc = self.healthbar.health_bar_region_rect.y + 50
             
             self.display_surface.blit(icon_surf, (x_loc, y_loc))
 
@@ -577,14 +491,12 @@ class Game:
         self.draw_bg()
         self.draw_particle_bg()
         # -------------queued text surface and the texts itself-------------------------------
-        # drawing the queued text rects
         self.draw_queued_text_rects(self.queued_text_rects)
-        # drawing the queued texts on top of the rects above
         self.draw_queued_text(self.queued_text_rects)
 
         # ----------- Player input text surface -------------------
         self.draw_player_input_text()
-        self.shake_text() # if the player gets the input wrong, shake the text
+        self.shake_text()
 
         self.draw_combo_count()
         self.draw_score()
@@ -598,19 +510,12 @@ class Game:
     def game_logic(self):
         self.check_user_input()
         self.update_queued_word_list_TEXTFILE()
-        # self.update_queued_word_list_WORD_LIBRARY(self.min_word_length, self.max_word_length)
-        # self.activate_game_modifiers()
-        # print(self.wordlist_index)
         
         # updating the instances created
         self.healthbar.update()
         self.typingtimer.update()
 
         # Game Over variable checks
-        # constantly fetching the out of lives bool from the healthbar class so that the "GAMEOVER" game state in main.py can update the screen state accordingly
         self.out_of_lives = self.healthbar.out_of_lives
-        # constantly fetching the out of time bool from the typingtimer class so that the "GAMEOVER" game state in main.py can update the screen state accordingly
         self.out_of_time = self.typingtimer.out_of_time
-
-        # print(self.game_modifiers)
     

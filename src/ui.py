@@ -39,7 +39,7 @@ class MainMenu(AllImageImports):
         self.menu_box_description_font = pygame.font.Font('assets/fonts/SpaceGrotesk-Medium.ttf', 15)
         self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 25)
 
-        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 50 instances of the BgParticles() class and put each one in the list "self.bg_particles"
+        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)]
 
         # ----------------------------------------------------------------------------------------------------------
 
@@ -48,8 +48,8 @@ class MainMenu(AllImageImports):
         self.home_menu_index = 0
         self.home_menu_option_count = len(self.home_menu_options)
 
-        self.main_menu_screen_state = 'MAIN MENU' # initial main menu screen state
-        self.original_main_menu_screen_state =  self.main_menu_screen_state # storing the initial main_menu_screen_state
+        self.main_menu_screen_state = 'MAIN MENU'
+        self.original_main_menu_screen_state =  self.main_menu_screen_state
 
         # how to play text descriptions
         self.how_to_play_description_text = ' - Type and match the prompted words on the screen.\n\n' \
@@ -77,9 +77,8 @@ class MainMenu(AllImageImports):
         self.home_menu_index %= self.home_menu_option_count
         if keys[pygame.K_SPACE]:
             self.audio_manager.play_sound_effect('menu_select_sound', self.sound_volume)
-            # when the player selects one of the options, change the current state of the ui to whatever the player selects.
 
-            if self.home_menu_options[self.home_menu_index] == 'START': # if the option that the player chooses is "START" it will bring the user to the 'PRE GAME SELECT' state. so we will just change that string to PRE GAME SELECT
+            if self.home_menu_options[self.home_menu_index] == 'START':
                 self.main_menu_screen_state = 'PRE GAME SELECT'
             else:
                 self.main_menu_screen_state = self.home_menu_options[self.home_menu_index]
@@ -89,14 +88,12 @@ class MainMenu(AllImageImports):
             self.home_menu_index = 0
     
     def draw_bg(self):
-        # SCALING
         self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         self.scaled_main_menu_bg_rect = self.scaled_main_menu_bg.get_frect(topleft=(0,0))
         self.display_surface.blit(self.scaled_main_menu_bg, self.scaled_main_menu_bg_rect)
     
     def draw_particle_bg(self):
-        # drawing the particles in the background
         for bg_particle in self.bg_particles:
             bg_particle.update()
 
@@ -104,23 +101,17 @@ class MainMenu(AllImageImports):
         title_x = WINDOW_WIDTH // 2
         title_y = WINDOW_HEIGHT // 5
 
-        # title_surf = self.title_font.render('Type Mania', True, COLORS['white'])
-        # title_rect = title_surf.get_frect(center=(title_x, title_y))
-
-        # scaling the main menu game title border to align with the width and height of the game title
-        # main_menu_game_title_border_scaled = pygame.transform.scale(self.main_menu_game_title_border, (5,5))
         game_title_banner_scaled = pygame.transform.scale(self.game_title_banner, (self.game_title_banner.width * 1.5,self.game_title_banner.height * 1.5))
         game_title_banner_rect = game_title_banner_scaled.get_frect(center=(title_x, title_y))
 
         self.display_surface.blit(game_title_banner_scaled, game_title_banner_rect)
-        # self.display_surface.blit(title_surf, title_rect)
         
     def main_menu_selection(self, main_menu_bg_rect, index, options):
         main_menu_bg_rect = main_menu_bg_rect
 
         # menu selection box coordinates
-        menu_selection_box_img_x = main_menu_bg_rect.width // 2 # x coordinate for the center of the background
-        menu_selection_box_img_y = WINDOW_HEIGHT - (main_menu_bg_rect.height // 3) # y coordinate for 2/3 of the height of the background
+        menu_selection_box_img_x = main_menu_bg_rect.width // 2
+        menu_selection_box_img_y = WINDOW_HEIGHT - (main_menu_bg_rect.height // 3)
 
         # menu selection box scaling
         self.menu_selection_box_img_scaled = pygame.transform.scale(self.menu_selection_box_img, (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.75))
@@ -135,31 +126,28 @@ class MainMenu(AllImageImports):
             x = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width / 2)
             y = self.menu_selection_box_img_rect.top + (self.menu_selection_box_img_rect.height / (len(options) + 2)) * (optionIndex + 1.5)
 
-            # if the current option is the one that the player is currently hovering over, then change the color to GRAY
             if optionIndex == index:
                 color = COLORS['midpurple']
             else:
                 color = COLORS['white']
 
-
-            # blitting the text on the buttom
-            text_surf = self.font.render(options[optionIndex], True, color) # render(text, antialias, color)
+            # blitting the text on the button
+            text_surf = self.font.render(options[optionIndex], True, color)
             text_rect = text_surf.get_frect(center = (x,y))
 
             # creating the button location for the text
             menu_button_img_scaled = pygame.transform.scale(self.menu_button_img, (text_rect.width * 1.5, text_rect.height * 2))
             button_rect = menu_button_img_scaled.get_frect(center = (x,y))
 
-            # blitting the button image first then the text surf on top
             self.display_surface.blit(menu_button_img_scaled, button_rect)
-            self.display_surface.blit(text_surf, text_rect) # blit(source, dest)
+            self.display_surface.blit(text_surf, text_rect)
 
     def how_to_play_screen(self, main_menu_bg_rect):
         main_menu_bg_rect = main_menu_bg_rect
 
         # menu selection box coordinates
-        menu_selection_box_img_x = main_menu_bg_rect.width // 2 # x coordinate for the center of the background
-        menu_selection_box_img_y = WINDOW_HEIGHT - (main_menu_bg_rect.height // 3) # y coordinate for 2/3 of the height of the background
+        menu_selection_box_img_x = main_menu_bg_rect.width // 2
+        menu_selection_box_img_y = WINDOW_HEIGHT - (main_menu_bg_rect.height // 3)
 
         # menu selection box scaling
         self.menu_selection_box_img_scaled = pygame.transform.scale(self.menu_selection_box_img, (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.75))
@@ -186,24 +174,15 @@ class MainMenu(AllImageImports):
 
         self.display_surface.blit(description_text_text, description_text_rect)
 
-    # def settings_screen(self):
-    #     pass
-
     def draw_menu(self):
         match self.main_menu_screen_state:
             case 'MAIN MENU':
                 self.main_menu_selection(self.scaled_main_menu_bg_rect, self.home_menu_index, self.home_menu_options)
             case 'PRE GAME SELECT':
-                pygame.time.delay(50) # temporary bug fix for a stutter look when clicking "PLAY" from the main menu to play the game
-                # THIS STATE IS HANDLED WITHIN main.py (under 'MAIN MENU' match case)
+                pygame.time.delay(50)
                 pass
             case 'HOW TO PLAY':
                 self.how_to_play_screen(self.scaled_main_menu_bg_rect)
-            # case 'SETTINGS':
-            #     self.settings_screen()
-            case 'QUIT':
-                # THIS STATE IS HANDLED WITHIN main.py (under 'MAIN MENU' match case)
-                pass
 
     def update(self):
         self.input()
@@ -232,8 +211,8 @@ class PauseGameMenu(AllImageImports):
         self.pause_menu_index = 0
         self.pause_menu_option_count = len(self.pause_menu_options)
 
-        self.pause_menu_screen_state = '' # initial pause menu screen state
-        self.original_pause_menu_screen_state = self.pause_menu_screen_state # storing the initial pause_menu_screen_state
+        self.pause_menu_screen_state = ''
+        self.original_pause_menu_screen_state = self.pause_menu_screen_state
 
     def reset_pause_menu_screen_state(self):
         self.pause_menu_screen_state = self.original_pause_menu_screen_state
@@ -263,8 +242,8 @@ class PauseGameMenu(AllImageImports):
     
     def draw(self, index, options):
         # menu selection box coordinates
-        menu_selection_box_img_x = WINDOW_WIDTH // 2 # x coordinate for the center of the window
-        menu_selection_box_img_y = WINDOW_HEIGHT // 2 # y coordinate for the center of the window
+        menu_selection_box_img_x = WINDOW_WIDTH // 2
+        menu_selection_box_img_y = WINDOW_HEIGHT // 2
 
         # menu selection box scaling
         self.menu_selection_box_img_scaled = pygame.transform.scale(self.menu_selection_box_img, (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.75))
@@ -284,15 +263,14 @@ class PauseGameMenu(AllImageImports):
             x = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width / 2)
             y = self.menu_selection_box_img_rect.top + (self.menu_selection_box_img_rect.height / (len(options) + 2)) * (optionIndex + 1.5)
 
-            # if the current option is the one that the player is currently hovering over, then change the color to GRAY
             if optionIndex == index:
                 color = COLORS['midpurple']
             else:
                 color = COLORS['white']
 
 
-            # blitting the text on the buttom
-            text_surf = self.font.render(options[optionIndex], True, color) # render(text, antialias, color)
+            # blitting the text on the button
+            text_surf = self.font.render(options[optionIndex], True, color)
             text_rect = text_surf.get_frect(center = (x,y))
 
             # creating the button location for the text
@@ -301,7 +279,7 @@ class PauseGameMenu(AllImageImports):
 
             # blitting the button image first then the text surf on top
             self.display_surface.blit(menu_button_img_scaled, button_rect)
-            self.display_surface.blit(text_surf, text_rect) # blit(source, dest)
+            self.display_surface.blit(text_surf, text_rect)
 
     def update(self):
         self.input()
@@ -319,7 +297,7 @@ class GameOverMenu(AllImageImports):
 
         self.display_surface = display_surface
 
-        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 100 instances of the BgParticles() class and put each one in the list "self.bg_particles"
+        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)]
 
         self.title_font = pygame.font.Font('assets/fonts/PressStart2P-Regular.ttf', 40)
         self.score_font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 30)
@@ -332,45 +310,38 @@ class GameOverMenu(AllImageImports):
         self.game_over_menu_index = 0
         self.game_over_menu_option_count = len(self.game_over_menu_options)
 
-        self.game_over_menu_screen_state = '' # initial game_over menu screen state
-        self.original_game_over_menu_screen_state = self.game_over_menu_screen_state # storing the initial game_over_menu_screen_state
+        self.game_over_menu_screen_state = ''
+        self.original_game_over_menu_screen_state = self.game_over_menu_screen_state
 
         # game_over_reason being either "out of lives" or "out of time"
-        self.game_over_reason = 'testing 123' # initial game_over_reason state
+        self.game_over_reason = 'testing 123'
         self.original_game_over_reason = self.game_over_reason
 
         # game modifier icon images
         self.icon_scale = 1
         # double time mod icon
         self.double_time_icon = pygame.transform.scale(self.double_time_icon, (self.double_time_icon.get_width() * self.icon_scale, self.double_time_icon.get_height() * self.icon_scale))
-
         # hidden mod icon
         self.hidden_icon = pygame.transform.scale(self.hidden_icon, (self.hidden_icon.get_width() * self.icon_scale, self.hidden_icon.get_height() * self.icon_scale))
-
         # perfect mod icon
         self.perfect_icon = pygame.transform.scale(self.perfect_icon, (self.perfect_icon.get_width() * self.icon_scale, self.perfect_icon.get_height() * self.icon_scale))
 
-        # score value variable to display
         self.score_value = 0
 
-        # combo value variable to display
         self.highest_combo_value = 0
 
-        # game modifier list to display
         self.game_modifiers = []
 
         # ignore player input timer
-        self.ignore_input_timer = Timer(3000, autostart=True) # we want to ignore player input for x amount of time to prevent the player from inputting something too fast when reaching the game over menu
+        self.ignore_input_timer = Timer(3000, autostart=True)
 
     def draw_bg(self):
-        # SCALING
         self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         self.scaled_main_menu_bg_rect = self.scaled_main_menu_bg.get_frect(topleft=(0,0))
         self.display_surface.blit(self.scaled_main_menu_bg, self.scaled_main_menu_bg_rect)
 
     def draw_particle_bg(self):
-        # drawing the particles in the background
         for bg_particle in self.bg_particles:
             bg_particle.update()
 
@@ -410,14 +381,10 @@ class GameOverMenu(AllImageImports):
             self.audio_manager.play_sound_effect('menu_select_sound', self.sound_volume)
             # when the player selects one of the options, change the current state of the ui to whatever the player selects.
             self.game_over_menu_screen_state = self.game_over_menu_options[self.game_over_menu_index]
-
-    # def update_game_over_reason(self, game_over_reason):
-    #     self.game_over_reason = game_over_reason
     
     def draw(self, index, options):
         
         # ---------------- GAME OVER TEXT -------------------
-        # game over text coordinates
         game_over_text_x = WINDOW_WIDTH // 2
         game_over_text_y = WINDOW_HEIGHT // 7
 
@@ -453,8 +420,8 @@ class GameOverMenu(AllImageImports):
             if self.game_modifiers[i] == 'Perfect':
                 icon_surf = self.perfect_icon
 
-            x_loc = game_modifier_text_rect.right + (i * icon_spacing) # getting the horizontal distance of the current icon (same x location as the title of the game modifier that is being displayed)
-            y_loc = game_modifier_text_rect.y # adding x amount of pixels under the text title of the modifier (displaying it under the modifier title)
+            x_loc = game_modifier_text_rect.right + (i * icon_spacing)
+            y_loc = game_modifier_text_rect.y
             
             self.display_surface.blit(icon_surf, (x_loc, y_loc))
 
@@ -465,8 +432,8 @@ class GameOverMenu(AllImageImports):
 
         # ----------------- MENU SELECTION BOX ---------------------------
         # menu selection box coordinates
-        menu_selection_box_img_x = WINDOW_WIDTH // 2 # x coordinate for the center of the window
-        menu_selection_box_img_y = WINDOW_HEIGHT // 2 # y coordinate for the center of the window
+        menu_selection_box_img_x = WINDOW_WIDTH // 2
+        menu_selection_box_img_y = WINDOW_HEIGHT // 2
 
         # menu selection box scaling
         self.menu_selection_box_img_scaled = pygame.transform.scale(self.menu_selection_box_img, (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.75))
@@ -476,9 +443,6 @@ class GameOverMenu(AllImageImports):
         self.display_surface.blit(self.menu_selection_box_img_scaled, self.menu_selection_box_img_rect)
 
         # ---------------- GAME OVER REASON TEXT -------------------
-        # game over reason coordinates
-        # game_over_reason_text_x = game_over_text_x
-        # game_over_reason_text_y = game_over_text_y + 50
 
         game_over_reason_text = self.font2.render(str(self.game_over_reason), True, COLORS['white'])
         game_over_reason_text_rect = game_over_reason_text.get_frect(center=(self.menu_selection_box_img_rect.centerx, self.menu_selection_box_img_rect.y + 75))
@@ -494,18 +458,16 @@ class GameOverMenu(AllImageImports):
 
         # MENU SELECTION OPTIONS
         for optionIndex in range(len(options)):
-            # x and y are the center points for each option
             x = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width / 2)
             y = self.menu_selection_box_img_rect.top + (self.menu_selection_box_img_rect.height / (len(options) + 2)) * (optionIndex + 1.5)
 
-            # if the current option is the one that the player is currently hovering over, then change the color to GRAY
             if optionIndex == index:
                 color = COLORS['midpurple']
             else:
                 color = COLORS['white']
 
-            # blitting the text on the buttom
-            text_surf = self.font.render(options[optionIndex], True, color) # render(text, antialias, color)
+            # blitting the text on the button
+            text_surf = self.font.render(options[optionIndex], True, color)
             text_rect = text_surf.get_frect(center = (x,y))
 
             # creating the button location for the text
@@ -514,7 +476,7 @@ class GameOverMenu(AllImageImports):
 
             # blitting the button image first then the text surf on top
             self.display_surface.blit(menu_button_img_scaled, button_rect)
-            self.display_surface.blit(text_surf, text_rect) # blit(source, dest)
+            self.display_surface.blit(text_surf, text_rect)
 
     def update(self):
         self.draw_bg()
@@ -536,7 +498,7 @@ class PreGameSelectMenu(AllImageImports):
 
         self.display_surface = display_surface
 
-        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)] # create 100 instances of the BgParticles() class and put each one in the list "self.bg_particles"
+        self.bg_particles = [BgParticles(self.display_surface) for _ in range(100)]
 
         self.font = pygame.font.Font('assets/fonts/Bungee-Regular.ttf', 20)
 
@@ -554,11 +516,11 @@ class PreGameSelectMenu(AllImageImports):
         self.pre_game_select_menu_index = 0
         self.pre_game_select_menu_option_count = len(self.pre_game_select_menu_options)
 
-        self.pre_game_select_menu_screen_state = '' # initial pre_game_select menu screen state
-        self.original_pre_game_select_menu_screen_state = self.pre_game_select_menu_screen_state # storing the initial pre_game_select_menu_screen_state
+        self.pre_game_select_menu_screen_state = ''
+        self.original_pre_game_select_menu_screen_state = self.pre_game_select_menu_screen_state
 
         self.modifier_selected_bool = False
-        self.modifier_selection = [] # a list containing all the modifiers the user has selected
+        self.modifier_selection = []
 
         # get the current menu option that the user is currently hovering on
         self.user_current_option_index = 0
@@ -592,20 +554,18 @@ class PreGameSelectMenu(AllImageImports):
             if user_modifier_selection == 'Perfect':
                 icon_surf = self.perfect_icon
 
-            x_loc = modifier_text_rect.centerx - 30 # getting the horizontal distance of the current icon (same x location as the title of the game modifier that is being displayed)
-            y_loc = modifier_text_rect.y + 40 # adding x amount of pixels under the text title of the modifier (displaying it under the modifier title)
+            x_loc = modifier_text_rect.centerx - 30
+            y_loc = modifier_text_rect.y + 40
             
             self.display_surface.blit(icon_surf, (x_loc, y_loc))
         
     def draw_bg(self):
-        # SCALING
         self.scaled_main_menu_bg = pygame.transform.scale(self.main_menu_bg, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         self.scaled_main_menu_bg_rect = self.scaled_main_menu_bg.get_frect(topleft=(0,0))
         self.display_surface.blit(self.scaled_main_menu_bg, self.scaled_main_menu_bg_rect)
 
     def draw_particle_bg(self):
-        # drawing the particles in the background
         for bg_particle in self.bg_particles:
             bg_particle.update()
 
@@ -642,12 +602,9 @@ class PreGameSelectMenu(AllImageImports):
             
         if keys[pygame.K_ESCAPE]:
             self.audio_manager.play_sound_effect('menu_select_sound', self.sound_volume)
-            # RETURN TO THE MAIN MENU
             self.pre_game_select_menu_screen_state = 'MAIN MENU'
 
     def draw_faded_background_for_text_desc(self):
-        # faded background for text desc coordinates (right half of the menu selection box image)
-        # x_left_center_of_menu_selection_box = (self.menu_selection_box_img_rect.width // 6) * 2
         x_right_center_of_menu_selection_box = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width // 4) * 3
         y_right_center_of_menu_selection_box = self.menu_selection_box_img_rect.height / 1.6
 
@@ -673,7 +630,6 @@ class PreGameSelectMenu(AllImageImports):
             test_width, _ = font.size(test_line)
 
             if test_width <= rect_width:
-                # if the word fits, add it to the current line
                 current_line = test_line
             else:
                 # if the word doesnt fit, start a new line
@@ -690,7 +646,6 @@ class PreGameSelectMenu(AllImageImports):
     def current_user_option_description(self, current_user_option, text_font):
         if current_user_option == 'Double Time':
             text_lines = self.wrap_text(self.double_time_text, text_font, self.faded_background_rect.width)
-            # Render each line of wrapped text inside the rectangle
             y_offset = self.faded_background_rect.top + self.faded_background_rect.height - 230
             for line in text_lines:
                 line_surface = text_font.render(line, True, COLORS['black'])
@@ -699,7 +654,6 @@ class PreGameSelectMenu(AllImageImports):
 
         if current_user_option == 'Hidden':
             text_lines = self.wrap_text(self.hidden_text, text_font, self.faded_background_rect.width)
-            # Render each line of wrapped text inside the rectangle
             y_offset = self.faded_background_rect.top + self.faded_background_rect.height - 230
             for line in text_lines:
                 line_surface = text_font.render(line, True, COLORS['black'])
@@ -708,20 +662,13 @@ class PreGameSelectMenu(AllImageImports):
 
         if current_user_option == 'Perfect':
             text_lines = self.wrap_text(self.perfect_text, text_font, self.faded_background_rect.width)
-            # Render each line of wrapped text inside the rectangle
             y_offset = self.faded_background_rect.top + self.faded_background_rect.height - 230
             for line in text_lines:
                 line_surface = text_font.render(line, True, COLORS['black'])
                 self.display_surface.blit(line_surface, (self.faded_background_rect.left + 2, y_offset))
                 y_offset += line_surface.get_height()
 
-        # if current_user_option == 'PLAY':
-        #     option_description_text_surf = self.font.render('', True, COLORS['black'])
-
-        # return option_description_text_surf
-
     def draw_menu_options(self, index, options):
-        # x and y cord for the 'PLAY' button
         x_center = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width / 2)
         y_under_rect = self.menu_selection_box_img_rect.bottom + 75
 
@@ -729,25 +676,22 @@ class PreGameSelectMenu(AllImageImports):
         x_left_center_of_menu_selection_box = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width // 4)
 
         for optionIndex in range(len(options)):
-            # x and y are the coordinates for each option
             x = x_left_center_of_menu_selection_box
             y = self.menu_selection_box_img_rect.top + (self.menu_selection_box_img_rect.height / (len(options) + 2)) * (optionIndex + 1.5)
 
-            # if the current option is the one that the player is currently hovering over, then change the color to GRAY
             if optionIndex == index:
                 color = COLORS['midpurple']
                 self.user_current_option_index = index # gets the current index that the user is currently hovering on and updates it onto this variable
             else:
                 color = COLORS['white']
 
-            text_surf = self.font.render(options[optionIndex], True, color) # render(text, antialias, color)
+            text_surf = self.font.render(options[optionIndex], True, color)
             
-            # if the menu option is 'PLAY', then put that TEXT option at the center of the screen under the menu box rect
             if options[optionIndex] == 'PLAY':
-                text_surf = self.play_button_font.render(options[optionIndex], True, color) # render(text, antialias, color)
+                text_surf = self.play_button_font.render(options[optionIndex], True, color)
                 text_rect = text_surf.get_frect(center = (x_center, y_under_rect))
             else:
-                text_surf = self.font.render(options[optionIndex], True, color) # render(text, antialias, color)
+                text_surf = self.font.render(options[optionIndex], True, color)
                 text_rect = text_surf.get_frect(midleft = (x,y))
                 
                 # checking what modifiers were selected by the user. we want to display the selected_box_surf if it is selected and the unselected_box_surf when it is not selected.
@@ -768,18 +712,17 @@ class PreGameSelectMenu(AllImageImports):
 
             # blitting the button image first then the text surf on top
             self.display_surface.blit(menu_button_img_scaled, button_rect)
-            self.display_surface.blit(text_surf, text_rect) # blit(source, dest)
+            self.display_surface.blit(text_surf, text_rect)
             
             # blitting the checkboxes beside each option
             self.display_surface.blit(selection_box_surf, selection_box_rect)
             
     def draw_option_description(self):
         # -------------- THE OPTION HEADER ----------------------
-        # the coordinates are blitted at their center points 
-        option_header_x = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width // 4) * 3 # second half of the menu selection box rect (center)
+        option_header_x = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width // 4) * 3
         option_header_y = self.menu_selection_box_img_rect.top + 125
 
-        current_user_option = self.pre_game_select_menu_options[self.user_current_option_index] # gets the current string of the option that the user is currently hovering on and updates it onto this variable
+        current_user_option = self.pre_game_select_menu_options[self.user_current_option_index]
         
         option_header_text_surf = self.game_modifier_title_font.render(current_user_option, True, COLORS['black'])
         option_header_text_rect = option_header_text_surf.get_frect(center = (option_header_x, option_header_y))
@@ -788,30 +731,20 @@ class PreGameSelectMenu(AllImageImports):
         if current_user_option != 'PLAY':
             self.draw_game_modifier_icon(current_user_option, option_header_text_rect)
 
-        self.display_surface.blit(option_header_text_surf, option_header_text_rect) # blit(source, dest)
+        self.display_surface.blit(option_header_text_surf, option_header_text_rect)
 
         # -------------- THE OPTION DESCRIPTION ----------------------
         # this function handles the display of the current user option description
         self.current_user_option_description(current_user_option, self.game_modifier_text_font)
-        # # the coordinates are blitted under the option header
-        # option_description_x = self.menu_selection_box_img_rect.left + (self.menu_selection_box_img_rect.width // 4) * 3 # second half of the menu selection box rect
-        # option_description_y = option_header_y + 30
-
-        # option_description_text_surf = self.current_user_option_description(current_user_option)
-        # option_description_text_rect = option_description_text_surf.get_frect(midtop = (option_description_x, option_description_y))
-
-        # self.display_surface.blit(option_description_text_surf, option_description_text_rect) # blit(source, dest)
 
     def draw(self, index, options):
 
         # menu selection box coordinates ( whole screen at the center of the screen )
-        menu_selection_box_img_x = WINDOW_WIDTH // 2 # x coordinate for the center of the window
-        menu_selection_box_img_y = WINDOW_HEIGHT / 2.5 # y coordinate for the center of the window
+        menu_selection_box_img_x = WINDOW_WIDTH // 2 
+        menu_selection_box_img_y = WINDOW_HEIGHT / 2.5
 
-        # menu selection box scaling
         self.menu_selection_box_img_scaled = pygame.transform.scale(self.menu_selection_box_img, (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT // 1.5))
 
-        # creating a rect of the newly scaled menu selection box image after it is scaled and blitting it onto the screen
         self.menu_selection_box_img_rect = self.menu_selection_box_img_scaled.get_frect(center=(menu_selection_box_img_x, menu_selection_box_img_y))
         self.display_surface.blit(self.menu_selection_box_img_scaled, self.menu_selection_box_img_rect)
 
