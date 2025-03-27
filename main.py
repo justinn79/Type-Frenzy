@@ -325,6 +325,6 @@ class Main:
 
         pygame.quit()
 
-# if __name__ == '__main__':
-#     main = Main()
-#     main.run()
+if __name__ == '__main__':
+    main = Main()
+    main.run()
