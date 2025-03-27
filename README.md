@@ -15,6 +15,7 @@ Controls:
 - Press TAB to reset your typing input box
 - Press ESCAPE to pause the game
 
+In Game Instructions:
 - Type and match the prompted words on the screen.
 - Lives are shown at the top left of the screen and are lost when submitting an incorrect word.
 - There is a typing meter at the bottom that depletes overtime but resets after every correct input.
