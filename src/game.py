@@ -13,7 +13,6 @@ import math
 
 class Game:
     def __init__(self, display_surface, audio_manager):
-        pygame.init()
         pygame.font.init()
 
         self.display_surface = display_surface

@@ -9,7 +9,7 @@ from src.game import *
 
 class Main:
     def __init__(self):
-
+        pygame.init()
         # windowed screen
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         # fullscreen
